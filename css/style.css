@@ -103,6 +103,12 @@ canvas {
   max-height: 350px;
 }
 
+.scroll-table {
+  max-height: 350px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
 @media (max-width: 900px) {
   .painel {
     grid-template-columns: 1fr;

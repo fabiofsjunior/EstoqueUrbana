@@ -1,18 +1,26 @@
 async function carregarIndicadores() {
   const dados = await api("indicadores");
 
-  document.getElementById("totalEstoque").innerText = dados.Total_Itens_Estoque;
+  document.getElementById("totalEstoque").innerText =
+    dados.Total_Itens_Estoque || 0;
 
-  document.getElementById("trocasMes").innerText = dados.Trocas_Mes;
+  document.getElementById("trocasMes").innerText = dados.Trocas_Mes || 0;
 
-  document.getElementById("vandalismos").innerText = dados.Vandalismos_Mes;
+  document.getElementById("vandalismos").innerText = dados.Vandalismos_Mes || 0;
 
-  document.getElementById("defeitos").innerText = dados.Defeitos_Mes;
+  document.getElementById("defeitos").innerText = dados.Defeitos_Mes || 0;
 
-  document.getElementById("pecasBancada").textContent = dados.Bancada_Mes || 0;
+  const bancada = document.getElementById("bancada");
 
-  document.getElementById("pecasVandalismos").textContent =
-    dados.Vandalismos_Mes || 0;
+  if (bancada) {
+    bancada.innerText = dados.Bancada_Mes || 0;
+  }
+
+  const vandalismosMes = document.getElementById("vandalismosMes");
+
+  if (vandalismosMes) {
+    vandalismosMes.innerText = dados.Vandalismos_Mes || 0;
+  }
 }
 async function carregarTopATM() {
   const dados = await api("top10atm");
@@ -160,6 +168,46 @@ async function carregarReparoPorLocal() {
   }
 }
 
+async function carregarBancada() {
+  const dados = await api("bancada");
+
+  const tbody = document.getElementById("pecasBancada");
+
+  tbody.innerHTML = "";
+
+  dados.forEach((item) => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${item.data}</td>
+        <td>${item.chamado}</td>
+        <td>${item.atm}</td>
+        <td>${item.peca}</td>
+        <td>${item.destino}</td>
+      </tr>
+    `;
+  });
+}
+
+async function carregarVandalismos() {
+  const dados = await api("vandalismosLista");
+
+  const tbody = document.getElementById("pecasVandalismos");
+
+  tbody.innerHTML = "";
+
+  dados.forEach((item) => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${item.data}</td>
+        <td>${item.chamado}</td>
+        <td>${item.atm}</td>
+        <td>${item.peca}</td>
+        <td>${item.destino}</td>
+      </tr>
+    `;
+  });
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   carregarIndicadores().catch(console.error);
   carregarTopATM().catch(console.error);
@@ -168,4 +216,6 @@ window.addEventListener("DOMContentLoaded", () => {
   carregarConsumoMensal().catch(console.error);
   carregarUltimasMovimentacoes().catch(console.error);
   carregarReparoPorLocal().catch(console.error);
+  carregarBancada().catch(console.error);
+  carregarVandalismos().catch(console.error);
 });
