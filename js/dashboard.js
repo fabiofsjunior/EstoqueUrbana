@@ -126,7 +126,7 @@ async function carregarConsumoMensal() {
 
 async function carregarReparoPorLocal() {
   try {
-    const dados = await api("reparoPorLocal");
+    const dados = await api("reparoLocal");
 
     console.log("DEBUG reparo por local:", dados);
 
