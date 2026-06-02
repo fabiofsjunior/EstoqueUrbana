@@ -128,8 +128,6 @@ async function carregarReparoPorLocal() {
   try {
     const dados = await api("reparoLocal");
 
-    console.log("DEBUG reparo por local:", dados);
-
     const container = document.getElementById("reparoLocal");
 
     if (!container) {
