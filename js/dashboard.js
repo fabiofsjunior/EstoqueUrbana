@@ -1,26 +1,28 @@
 async function carregarIndicadores() {
-  const dados = await api("indicadores");
+
+  const dados =
+    await api("indicadores");
 
   document.getElementById("totalEstoque").innerText =
     dados.Total_Itens_Estoque || 0;
 
-  document.getElementById("trocasMes").innerText = dados.Trocas_Mes || 0;
+  document.getElementById("trocasMes").innerText =
+    dados.Trocas_Mes || 0;
 
-  document.getElementById("vandalismos").innerText = dados.Vandalismos_Mes || 0;
+  document.getElementById("vandalismos").innerText =
+    dados.Vandalismos || 0;
 
-  document.getElementById("defeitos").innerText = dados.Defeitos_Mes || 0;
+  document.getElementById("defeitos").innerText =
+    dados.Defeitos_Mes || 0;
 
-  const bancada = document.getElementById("bancada");
+  const bancada =
+    document.getElementById("bancada");
 
   if (bancada) {
-    bancada.innerText = dados.Bancada_Mes || 0;
+    bancada.innerText =
+      dados.Bancada || 0;
   }
 
-  const vandalismosMes = document.getElementById("vandalismosMes");
-
-  if (vandalismosMes) {
-    vandalismosMes.innerText = dados.Vandalismos_Mes || 0;
-  }
 }
 async function carregarTopATM() {
   const dados = await api("top10atm");
