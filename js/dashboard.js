@@ -43,18 +43,35 @@ async function carregarTopPecas() {
 }
 
 async function carregarMotivos() {
-  const dados = await api("motivos");
+  try {
+    const dados = await api("motivos");
 
-  console.log("DEBUG motivos:", dados);
+    console.log("DEBUG motivos:", dados);
 
-  if (!Array.isArray(dados)) {
-    console.error("Esperado array, veio:", dados);
-    return;
+    const container = document.getElementById("motivos-body");
+
+    if (!container) {
+      console.error("Elemento #motivos-body não encontrado");
+      return;
+    }
+
+    container.innerHTML = "";
+
+    let html = "";
+
+    dados.forEach((item) => {
+      html += `
+        <tr>
+          <td>${item.motivo}</td>
+          <td>${item.quantidade}</td>
+        </tr>
+      `;
+    });
+
+    container.innerHTML = html;
+  } catch (err) {
+    console.error("Erro ao carregar motivos:", err);
   }
-
-  dados.forEach((item) => {
-    console.log(item);
-  });
 }
 
 async function carregarUltimasMovimentacoes() {
@@ -109,7 +126,7 @@ async function carregarConsumoMensal() {
   );
 }
 
-window.onload = async () => {
+window.addEventListener("DOMContentLoaded", async () => {
   await carregarIndicadores();
   await carregarTopATM();
   await carregarTopPecas();
@@ -117,4 +134,6 @@ window.onload = async () => {
   await carregarMotivos();
   await carregarConsumoMensal();
   await carregarUltimasMovimentacoes();
-};
+});
+
+
