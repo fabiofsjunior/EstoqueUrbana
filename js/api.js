@@ -1,10 +1,11 @@
 async function api(action){
 
-  const response =
-    await fetch(
-      `${API_URL}?action=${action}`
-    );
+  const response = await fetch(`${API_URL}?action=${action}`, {
+    method: "GET",
+    mode: "cors"
+  });
 
-  return await response.json();
+  const text = await response.text();
+  return JSON.parse(text);
 
 }
