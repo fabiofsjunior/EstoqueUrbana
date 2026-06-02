@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Gestão de Estoque Urbana/PE</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+
+  <body>
+    <header>
+      <h1>📦 Gestão de Estoque Urbana/PE</h1>
+      <p>Controle de Peças, Reparos e Chamados</p>
+    </header>
+
+    <section class="cards">
+      <div class="card">
+        <h2 id="totalEstoque">0</h2>
+        <p>Itens em Estoque</p>
+      </div>
+
+      <div class="card">
+        <h2 id="trocasMes">0</h2>
+        <p>Trocas do Mês</p>
+      </div>
+
+      <div class="card">
+        <h2 id="vandalismos">0</h2>
+        <p>Vandalismos</p>
+      </div>
+
+      <div class="card">
+        <h2 id="defeitos">0</h2>
+        <p>Defeitos</p>
+      </div>
+
+      <div class="card">
+        <h2 id="pecasReparo">0</h2>
+        <p>Peças em Reparo</p>
+      </div>
+
+      <div class="card">
+        <h2 id="chamadosAbertos">0</h2>
+        <p>Chamados Abertos</p>
+      </div>
+    </section>
+
+    <section class="painel">
+      <div class="box">
+        <h3>Top 10 Peças Mais Trocadas</h3>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Peça</th>
+              <th>Qtd</th>
+            </tr>
+          </thead>
+
+          <tbody id="topPecas"></tbody>
+        </table>
+      </div>
+
+      <div class="box">
+        <h3>Top 10 ATM com Mais Trocas</h3>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ATM</th>
+              <th>Qtd</th>
+            </tr>
+          </thead>
+
+          <tbody id="topATM"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="painel">
+      <div class="box">
+        <h3>Motivos das Trocas</h3>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Motivo</th>
+              <th>Qtd</th>
+            </tr>
+          </thead>
+
+          <tbody id="motivos"></tbody>
+        </table>
+      </div>
+
+      <div class="box">
+        <h3>Reparo por Local</h3>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Destino</th>
+              <th>Qtd</th>
+            </tr>
+          </thead>
+
+          <tbody id="reparoLocal"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="box">
+      <h3>Consumo Mensal</h3>
+
+      <canvas id="graficoConsumo"></canvas>
+    </section>
+
+    <section class="box">
+      <h3>Últimas Movimentações</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Chamado</th>
+            <th>ATM</th>
+            <th>Peça</th>
+            <th>Mov.</th>
+          </tr>
+        </thead>
+
+        <tbody id="ultimasMov"></tbody>
+      </table>
+    </section>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+  </body>
+</html>
