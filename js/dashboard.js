@@ -147,8 +147,8 @@ async function carregarReparoPorLocal() {
     dados.forEach((item) => {
       container.innerHTML += `
         <tr>
-          <td>${item.local ?? "-"}</td>
-          <td>${item.total ?? 0}</td>
+          <td>${item.destino ?? "-"}</td>
+          <td>${item.quantidade ?? 0}</td>
         </tr>
       `;
     });
