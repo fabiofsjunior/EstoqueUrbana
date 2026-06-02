@@ -46,8 +46,6 @@ async function carregarMotivos() {
   try {
     const dados = await api("motivos");
 
-    console.log("DEBUG motivos:", dados);
-
     const container = document.getElementById("motivos-body");
 
     if (!container) {
@@ -146,7 +144,7 @@ async function carregarReparoPorLocal() {
       return;
     }
 
-    dados.forEach(item => {
+    dados.forEach((item) => {
       container.innerHTML += `
         <tr>
           <td>${item.local ?? "-"}</td>
@@ -154,7 +152,6 @@ async function carregarReparoPorLocal() {
         </tr>
       `;
     });
-
   } catch (err) {
     console.error("Erro ao carregar reparo por local:", err);
   }
@@ -169,5 +166,3 @@ window.addEventListener("DOMContentLoaded", () => {
   carregarUltimasMovimentacoes().catch(console.error);
   carregarReparoPorLocal().catch(console.error);
 });
-
-
