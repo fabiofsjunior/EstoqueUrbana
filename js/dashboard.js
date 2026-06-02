@@ -126,14 +126,13 @@ async function carregarConsumoMensal() {
   );
 }
 
-window.addEventListener("DOMContentLoaded", async () => {
-  await carregarIndicadores();
-  await carregarTopATM();
-  await carregarTopPecas();
-
-  await carregarMotivos();
-  await carregarConsumoMensal();
-  await carregarUltimasMovimentacoes();
+window.addEventListener("DOMContentLoaded", () => {
+  carregarIndicadores().catch(console.error);
+  carregarTopATM().catch(console.error);
+  carregarTopPecas().catch(console.error);
+  carregarMotivos().catch(console.error);
+  carregarConsumoMensal().catch(console.error);
+  carregarUltimasMovimentacoes().catch(console.error);
 });
 
 
