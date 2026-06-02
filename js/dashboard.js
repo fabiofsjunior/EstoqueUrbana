@@ -9,9 +9,9 @@ async function carregarIndicadores() {
 
   document.getElementById("defeitos").innerText = dados.Defeitos_Mes;
 
-  document.getElementById("bancada").textContent = dados.Bancada_Mes || 0;
+  document.getElementById("pecasBancada").textContent = dados.Bancada_Mes || 0;
 
-  document.getElementById("vandalismos").textContent =
+  document.getElementById("pecasVandalismos").textContent =
     dados.Vandalismos_Mes || 0;
 }
 async function carregarTopATM() {
