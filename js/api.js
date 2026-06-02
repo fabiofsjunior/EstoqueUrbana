@@ -1,23 +1,19 @@
-function api(action) {
-  return new Promise((resolve, reject) => {
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbwgwU6zyMYbrWtCO6ORZJ2-5CfHJ0-kEa4QmAYbCtDyEOvrbOow4ergdID3vxzD_zEv/exec";
 
-    const callbackName = "cb_" + Date.now();
+async function api(action) {
+  try {
+    const res = await fetch(`${API_URL}?action=${action}`);
+    
+    if (!res.ok) {
+      throw new Error("Erro HTTP: " + res.status);
+    }
 
-    window[callbackName] = function (data) {
-      resolve(data);
-      delete window[callbackName];
-      script.remove();
-    };
+    const data = await res.json();
+    return data;
 
-    const script = document.createElement("script");
-
-    script.src =
-      `${API_URL}?action=${action}&callback=${callbackName}`;
-
-    script.onerror = function (err) {
-      reject(new Error("Falha ao carregar API"));
-    };
-
-    document.body.appendChild(script);
-  });
+  } catch (err) {
+    console.error("Erro API:", err);
+    throw err;
+  }
 }
