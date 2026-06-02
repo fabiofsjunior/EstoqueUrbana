@@ -126,6 +126,40 @@ async function carregarConsumoMensal() {
   );
 }
 
+async function carregarReparoPorLocal() {
+  try {
+    const dados = await api("reparoPorLocal");
+
+    console.log("DEBUG reparo por local:", dados);
+
+    const container = document.getElementById("reparoLocal");
+
+    if (!container) {
+      console.error("Container não encontrado");
+      return;
+    }
+
+    container.innerHTML = "";
+
+    if (!Array.isArray(dados)) {
+      console.error("Resposta não é array:", dados);
+      return;
+    }
+
+    dados.forEach(item => {
+      container.innerHTML += `
+        <tr>
+          <td>${item.local ?? "-"}</td>
+          <td>${item.total ?? 0}</td>
+        </tr>
+      `;
+    });
+
+  } catch (err) {
+    console.error("Erro ao carregar reparo por local:", err);
+  }
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   carregarIndicadores().catch(console.error);
   carregarTopATM().catch(console.error);
@@ -133,6 +167,7 @@ window.addEventListener("DOMContentLoaded", () => {
   carregarMotivos().catch(console.error);
   carregarConsumoMensal().catch(console.error);
   carregarUltimasMovimentacoes().catch(console.error);
+  carregarReparoPorLocal().catch(console.error);
 });
 
 
