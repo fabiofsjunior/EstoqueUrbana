@@ -155,6 +155,60 @@ async function carregarReparoPorLocal() {
   }
 }
 
+async function carregarBancada() {
+
+  const dados = await api("bancada");
+
+  const tbody =
+    document.getElementById("bancada-body");
+
+  if (!tbody) return;
+
+  tbody.innerHTML = "";
+
+  dados.forEach(item => {
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${item.chamado}</td>
+        <td>${item.atm}</td>
+        <td>${item.peca}</td>
+        <td>${item.destino}</td>
+        <td>${item.data}</td>
+      </tr>
+    `;
+
+  });
+
+}
+
+async function carregarVandalismo() {
+
+  const dados = await api("vandalismo");
+
+  const tbody =
+    document.getElementById("vandalismo-body");
+
+  if (!tbody) return;
+
+  tbody.innerHTML = "";
+
+  dados.forEach(item => {
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${item.chamado}</td>
+        <td>${item.atm}</td>
+        <td>${item.peca}</td>
+        <td>${item.destino}</td>
+        <td>${item.data}</td>
+      </tr>
+    `;
+
+  });
+
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   carregarIndicadores().catch(console.error);
   carregarTopATM().catch(console.error);
@@ -163,4 +217,6 @@ window.addEventListener("DOMContentLoaded", () => {
   carregarConsumoMensal().catch(console.error);
   carregarUltimasMovimentacoes().catch(console.error);
   carregarReparoPorLocal().catch(console.error);
+  carregarBancada().catch(console.error);
+  carregarVandalismo().catch(console.error);
 });
