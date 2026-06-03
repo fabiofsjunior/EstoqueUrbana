@@ -370,6 +370,16 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+function atualizarHorario() {
+  const agora = new Date();
+
+  const el = document.getElementById("ultimaAtualizacao");
+
+  if (!el) return;
+
+  el.innerText = "Atualizado às " + agora.toLocaleTimeString("pt-BR");
+}
+
 function atualizarDashboard() {
   carregarIndicadores().catch(console.error);
   carregarTopATM().catch(console.error);
@@ -381,19 +391,14 @@ function atualizarDashboard() {
   carregarBancada().catch(console.error);
   carregarVandalismo().catch(console.error);
 
-  function atualizarHorario() {
-    const agora = new Date();
-
-    document.getElementById("ultimaAtualizacao").innerText =
-      "Atualizado às " + agora.toLocaleTimeString("pt-BR");
-  }
+  // atualiza horário SEMPRE que atualizar o dashboard
+  atualizarHorario();
 }
 
 window.addEventListener("DOMContentLoaded", () => {
   atualizarDashboard();
 
-  setInterval(
-    atualizarDashboard,
-    600000, // 10 minutos
-  );
+  setInterval(() => {
+    atualizarDashboard();
+  }, 600000); // 10 minutos
 });
