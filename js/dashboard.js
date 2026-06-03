@@ -93,19 +93,39 @@ async function carregarUltimasMovimentacoes() {
 }
 
 async function carregarConsumoMensal() {
+
   const dados = await api("consumo");
 
   const labels = [];
   const valores = [];
 
   dados.forEach((item) => {
-    labels.push(item[0]);
+
+    let mes = item[0];
+
+    if (
+      typeof mes === "string" &&
+      mes.includes("T")
+    ) {
+
+      const data = new Date(mes);
+
+      mes =
+        String(data.getMonth() + 1)
+          .padStart(2, "0") +
+        "/" +
+        data.getFullYear();
+
+    }
+
+    labels.push(mes);
+
     valores.push(item[1]);
+
   });
 
   new Chart(
     document.getElementById("graficoConsumo"),
-
     {
       type: "bar",
 
@@ -115,13 +135,13 @@ async function carregarConsumoMensal() {
         datasets: [
           {
             label: "Consumo Mensal",
-
-            data: valores,
-          },
-        ],
-      },
-    },
+            data: valores
+          }
+        ]
+      }
+    }
   );
+
 }
 
 async function carregarReparoPorLocal() {
