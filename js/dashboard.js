@@ -1,13 +1,28 @@
 async function carregarIndicadores() {
-  const dados = await api("indicadores");
 
-  document.getElementById("totalEstoque").innerText = dados.Total_Itens_Estoque;
+  const dados =
+    await api("indicadores");
 
-  document.getElementById("trocasMes").innerText = dados.Trocas_Mes;
+  document.getElementById("totalEstoque").innerText =
+    dados.Total_Itens_Estoque || 0;
 
-  document.getElementById("vandalismos").innerText = dados.Vandalismos_Mes;
+  document.getElementById("trocasMes").innerText =
+    dados.Trocas_Mes || 0;
 
-  document.getElementById("defeitos").innerText = dados.Defeitos_Mes;
+  document.getElementById("vandalismos").innerText =
+    dados.Vandalismos || 0;
+
+  document.getElementById("defeitos").innerText =
+    dados.Defeitos_Mes || 0;
+
+  const bancada =
+    document.getElementById("bancada");
+
+  if (bancada) {
+    bancada.innerText =
+      dados.Bancada || 0;
+  }
+
 }
 async function carregarTopATM() {
   const dados = await api("top10atm");
@@ -163,224 +178,44 @@ async function carregarReparoPorLocal() {
 async function carregarBancada() {
   const dados = await api("bancada");
 
-  const tbody = document.getElementById("bancada-body");
-
-  if (!tbody) return;
+  const tbody = document.getElementById("pecasBancada");
 
   tbody.innerHTML = "";
 
   dados.forEach((item) => {
     tbody.innerHTML += `
       <tr>
+        <td>${item.data}</td>
         <td>${item.chamado}</td>
         <td>${item.atm}</td>
         <td>${item.peca}</td>
         <td>${item.destino}</td>
-        <td>${item.data}</td>
       </tr>
     `;
   });
 }
 
-async function carregarVandalismo() {
-  const dados = await api("vandalismo");
+async function carregarVandalismos() {
+  const dados = await api("vandalismosLista");
 
-  const tbody = document.getElementById("vandalismo-body");
-
-  if (!tbody) return;
+  const tbody = document.getElementById("pecasVandalismos");
 
   tbody.innerHTML = "";
 
   dados.forEach((item) => {
     tbody.innerHTML += `
       <tr>
+        <td>${item.data}</td>
         <td>${item.chamado}</td>
         <td>${item.atm}</td>
         <td>${item.peca}</td>
         <td>${item.destino}</td>
-        <td>${item.data}</td>
       </tr>
     `;
   });
 }
 
-function imprimirBancada() {
-  const tabela = document.querySelector("#bancada-body");
-
-  const linhas = tabela.innerHTML;
-
-  const janela = window.open("", "_blank");
-
-  janela.document.write(`
-    <html>
-      <head>
-
-        <title>Relatório de Bancada</title>
-
-        <style>
-
-          body{
-            font-family: Arial, sans-serif;
-            padding:20px;
-          }
-
-          h1{
-            margin-bottom:20px;
-          }
-
-          table{
-            width:100%;
-            border-collapse:collapse;
-          }
-
-          th,td{
-            border:1px solid #ccc;
-            padding:8px;
-            text-align:left;
-          }
-
-          th{
-            background:#f3f4f6;
-          }
-
-        </style>
-
-      </head>
-
-      <body>
-
-        <h1>Relatório de Bancada</h1>
-
-        <table>
-
-          <thead>
-            <tr>
-              <th>Chamado</th>
-              <th>ATM</th>
-              <th>Peça</th>
-              <th>Destino</th>
-              <th>Data</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            ${linhas}
-          </tbody>
-
-        </table>
-
-      </body>
-    </html>
-  `);
-
-  janela.document.close();
-
-  setTimeout(() => {
-    janela.print();
-  }, 500);
-}
-
-function imprimirVandalismo() {
-  const tabela = document.querySelector("#vandalismo-body");
-
-  const linhas = tabela.innerHTML;
-
-  const janela = window.open("", "_blank");
-
-  janela.document.write(`
-    <html>
-      <head>
-
-        <title>Relatório de Vandalismo</title>
-
-        <style>
-
-          body{
-            font-family: Arial, sans-serif;
-            padding:20px;
-          }
-
-          h1{
-            margin-bottom:20px;
-          }
-
-          table{
-            width:100%;
-            border-collapse:collapse;
-          }
-
-          th,td{
-            border:1px solid #ccc;
-            padding:8px;
-            text-align:left;
-          }
-
-          th{
-            background:#f3f4f6;
-          }
-
-        </style>
-
-      </head>
-
-      <body>
-
-        <h1>Relatório de Vandalismo</h1>
-
-        <table>
-
-          <thead>
-            <tr>
-              <th>Chamado</th>
-              <th>ATM</th>
-              <th>Peça</th>
-              <th>Destino</th>
-              <th>Data</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            ${linhas}
-          </tbody>
-
-        </table>
-
-      </body>
-    </html>
-  `);
-
-  janela.document.close();
-
-  setTimeout(() => {
-    janela.print();
-  }, 500);
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const btnBancada = document.getElementById("btnPdfBancada");
-
-  if (btnBancada) {
-    btnBancada.addEventListener("click", imprimirBancada);
-  }
-
-  const btnVandalismo = document.getElementById("btnPdfVandalismo");
-
-  if (btnVandalismo) {
-    btnVandalismo.addEventListener("click", imprimirVandalismo);
-  }
-});
-
-function atualizarHorario() {
-  const agora = new Date();
-
-  const el = document.getElementById("ultimaAtualizacao");
-
-  if (!el) return;
-
-  el.innerText = "Atualizado às " + agora.toLocaleTimeString("pt-BR");
-}
-
-function atualizarDashboard() {
+window.addEventListener("DOMContentLoaded", () => {
   carregarIndicadores().catch(console.error);
   carregarTopATM().catch(console.error);
   carregarTopPecas().catch(console.error);
@@ -389,16 +224,5 @@ function atualizarDashboard() {
   carregarUltimasMovimentacoes().catch(console.error);
   carregarReparoPorLocal().catch(console.error);
   carregarBancada().catch(console.error);
-  carregarVandalismo().catch(console.error);
-
-  // atualiza horário SEMPRE que atualizar o dashboard
-  atualizarHorario();
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-  atualizarDashboard();
-
-  setInterval(() => {
-    atualizarDashboard();
-  }, 600000); // 10 minutos
+  carregarVandalismos().catch(console.error);
 });
