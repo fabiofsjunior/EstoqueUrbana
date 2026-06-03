@@ -376,6 +376,4 @@ window.addEventListener("DOMContentLoaded", () => {
   carregarBancada().catch(console.error);
   carregarVandalismo().catch(console.error);
 
-  imprimirBancada().catch(console.error);
-  imprimirVandalismo().catch(console.error);
 });
