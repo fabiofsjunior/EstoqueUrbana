@@ -50,14 +50,12 @@
               <th>Qtd</th>
             </tr>
           </thead>
-
           <tbody id="topPecas"></tbody>
         </table>
       </div>
 
       <div class="box">
         <h3>Top 10 ATM com Mais Trocas</h3>
-
         <table>
           <thead>
             <tr>
@@ -65,7 +63,6 @@
               <th>Qtd</th>
             </tr>
           </thead>
-
           <tbody id="topATM"></tbody>
         </table>
       </div>
@@ -74,7 +71,6 @@
     <section class="painel">
       <div class="box">
         <h3>Motivos das Trocas</h3>
-
         <table>
           <thead>
             <tr>
@@ -82,7 +78,6 @@
               <th>Qtd</th>
             </tr>
           </thead>
-
           <tbody id="motivos-body"></tbody>
         </table>
       </div>
@@ -97,7 +92,6 @@
               <th>Qtd</th>
             </tr>
           </thead>
-
           <tbody id="reparoLocal"></tbody>
         </table>
       </div>
@@ -105,95 +99,74 @@
 
     <section class="box">
       <h3>Consumo Mensal</h3>
-
       <canvas id="graficoConsumo"></canvas>
     </section>
 
-    <!-- ========================= -->
-    <!-- REPAROS EM BANCADA -->
-    <!-- ========================= -->
-    <div class="card-header">
-      <h3>🔧 Reparos em Bancada</h3>
-      <button id="btnPdfBancada">PDF</button>
-    </div>
+    <div class="cards-listagem">
+      <!-- REPAROS EM BANCADA -->
 
-    <div class="card-dashboard">
-      <div class="card-header">
-        <h3>🔧 Reparos em Bancada</h3>
+      <div class="card-dashboard">
+        <div class="card-header">
+          <h3>🔧 Reparos em Bancada</h3>
+        </div>
+
+        <div id="card-bancada" class="card-body">
+          <table class="tabela-dashboard">
+            <thead>
+              <tr>
+                <th>Chamado</th>
+                <th>ATM</th>
+                <th>Peça</th>
+                <th>Destino</th>
+                <th>Data</th>
+              </tr>
+            </thead>
+
+            <tbody id="bancada-body">
+              <tr>
+                <td colspan="5">Carregando...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card-footer">
+          <button id="btnPdfBancada" class="btn-pdf">📄 Imprimir PDF</button>
+        </div>
       </div>
 
-      <div id="card-bancada" class="card-body">
-        <table class="tabela-dashboard">
-          <thead>
-            <tr>
-              <th>Chamado</th>
-              <th>ATM</th>
-              <th>Peça</th>
-              <th>Destino</th>
-              <th>Data</th>
-            </tr>
-          </thead>
+      <!-- VANDALISMO -->
 
-          <tbody id="bancada-body">
-            <tr>
-              <td colspan="5">Carregando...</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="card-dashboard">
+        <div class="card-header">
+          <h3>🚨 Vandalismo</h3>
+        </div>
+
+        <div id="card-vandalismo" class="card-body">
+          <table class="tabela-dashboard">
+            <thead>
+              <tr>
+                <th>Chamado</th>
+                <th>ATM</th>
+                <th>Peça</th>
+                <th>Destino</th>
+                <th>Data</th>
+              </tr>
+            </thead>
+
+            <tbody id="vandalismo-body">
+              <tr>
+                <td colspan="5">Carregando...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card-footer">
+          <button id="btnPdfVandalismo" class="btn-pdf">📄 Imprimir PDF</button>
+        </div>
       </div>
     </div>
-
-    <!-- ========================= -->
-    <!-- VANDALISMO -->
-    <!-- ========================= -->
-    <div class="card-header">
-      <h3>🚨 Vandalismo</h3>
-      <button id="btnPdfVandalismo">PDF</button>
-    </div>
-
-    <div class="card-dashboard">
-      <div class="card-header">
-        <h3>🚨 Vandalismo</h3>
-      </div>
-
-      <div id="card-vandalismo" class="card-body">
-        <table class="tabela-dashboard">
-          <thead>
-            <tr>
-              <th>Chamado</th>
-              <th>ATM</th>
-              <th>Peça</th>
-              <th>Destino</th>
-              <th>Data</th>
-            </tr>
-          </thead>
-
-          <tbody id="vandalismo-body">
-            <tr>
-              <td colspan="5">Carregando...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <section class="box">
-      <h3>Últimas Movimentações</h3>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Chamado</th>
-            <th>ATM</th>
-            <th>Peça</th>
-            <th>Mov.</th>
-          </tr>
-        </thead>
-
-        <tbody id="ultimasMov"></tbody>
-      </table>
-    </section>
 
     <script src="js/api.js"></script>
     <script src="js/dashboard.js"></script>
