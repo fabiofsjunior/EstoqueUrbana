@@ -156,18 +156,15 @@ async function carregarReparoPorLocal() {
 }
 
 async function carregarBancada() {
-
   const dados = await api("bancada");
 
-  const tbody =
-    document.getElementById("bancada-body");
+  const tbody = document.getElementById("bancada-body");
 
   if (!tbody) return;
 
   tbody.innerHTML = "";
 
-  dados.forEach(item => {
-
+  dados.forEach((item) => {
     tbody.innerHTML += `
       <tr>
         <td>${item.chamado}</td>
@@ -177,24 +174,19 @@ async function carregarBancada() {
         <td>${item.data}</td>
       </tr>
     `;
-
   });
-
 }
 
 async function carregarVandalismo() {
-
   const dados = await api("vandalismo");
 
-  const tbody =
-    document.getElementById("vandalismo-body");
+  const tbody = document.getElementById("vandalismo-body");
 
   if (!tbody) return;
 
   tbody.innerHTML = "";
 
-  dados.forEach(item => {
-
+  dados.forEach((item) => {
     tbody.innerHTML += `
       <tr>
         <td>${item.chamado}</td>
@@ -204,10 +196,174 @@ async function carregarVandalismo() {
         <td>${item.data}</td>
       </tr>
     `;
-
   });
-
 }
+
+function imprimirBancada() {
+  const tabela = document.querySelector("#bancada-body");
+
+  const linhas = tabela.innerHTML;
+
+  const janela = window.open("", "_blank");
+
+  janela.document.write(`
+    <html>
+      <head>
+
+        <title>Relatório de Bancada</title>
+
+        <style>
+
+          body{
+            font-family: Arial, sans-serif;
+            padding:20px;
+          }
+
+          h1{
+            margin-bottom:20px;
+          }
+
+          table{
+            width:100%;
+            border-collapse:collapse;
+          }
+
+          th,td{
+            border:1px solid #ccc;
+            padding:8px;
+            text-align:left;
+          }
+
+          th{
+            background:#f3f4f6;
+          }
+
+        </style>
+
+      </head>
+
+      <body>
+
+        <h1>Relatório de Bancada</h1>
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Chamado</th>
+              <th>ATM</th>
+              <th>Peça</th>
+              <th>Destino</th>
+              <th>Data</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${linhas}
+          </tbody>
+
+        </table>
+
+      </body>
+    </html>
+  `);
+
+  janela.document.close();
+
+  setTimeout(() => {
+    janela.print();
+  }, 500);
+}
+
+function imprimirVandalismo() {
+  const tabela = document.querySelector("#vandalismo-body");
+
+  const linhas = tabela.innerHTML;
+
+  const janela = window.open("", "_blank");
+
+  janela.document.write(`
+    <html>
+      <head>
+
+        <title>Relatório de Vandalismo</title>
+
+        <style>
+
+          body{
+            font-family: Arial, sans-serif;
+            padding:20px;
+          }
+
+          h1{
+            margin-bottom:20px;
+          }
+
+          table{
+            width:100%;
+            border-collapse:collapse;
+          }
+
+          th,td{
+            border:1px solid #ccc;
+            padding:8px;
+            text-align:left;
+          }
+
+          th{
+            background:#f3f4f6;
+          }
+
+        </style>
+
+      </head>
+
+      <body>
+
+        <h1>Relatório de Vandalismo</h1>
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Chamado</th>
+              <th>ATM</th>
+              <th>Peça</th>
+              <th>Destino</th>
+              <th>Data</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${linhas}
+          </tbody>
+
+        </table>
+
+      </body>
+    </html>
+  `);
+
+  janela.document.close();
+
+  setTimeout(() => {
+    janela.print();
+  }, 500);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btnBancada = document.getElementById("btnPdfBancada");
+
+  if (btnBancada) {
+    btnBancada.addEventListener("click", imprimirBancada);
+  }
+
+  const btnVandalismo = document.getElementById("btnPdfVandalismo");
+
+  if (btnVandalismo) {
+    btnVandalismo.addEventListener("click", imprimirVandalismo);
+  }
+});
 
 window.addEventListener("DOMContentLoaded", () => {
   carregarIndicadores().catch(console.error);
@@ -219,4 +375,7 @@ window.addEventListener("DOMContentLoaded", () => {
   carregarReparoPorLocal().catch(console.error);
   carregarBancada().catch(console.error);
   carregarVandalismo().catch(console.error);
+
+  imprimirBancada().catch(console.error);
+  imprimirVandalismo().catch(console.error);
 });
