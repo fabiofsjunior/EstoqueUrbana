@@ -103,73 +103,75 @@
       <h3>Consumo Mensal</h3>
       <canvas id="graficoConsumo"></canvas>
     </section>
-    <div></div>
-    <div class="cards-listagem">
-      <!-- REPAROS EM BANCADA -->
+    <section class="box">
+      <div class="cards-listagem">
+        <!-- REPAROS EM BANCADA -->
 
-      <div class="card-dashboard">
-        <div class="card-header">
-          <h3>🔧 Reparos em Bancada</h3>
+        <div class="card-dashboard">
+          <div class="card-header">
+            <h3>🔧 Reparos em Bancada</h3>
+          </div>
+
+          <div id="card-bancada" class="card-body">
+            <table class="tabela-dashboard">
+              <thead>
+                <tr>
+                  <th>Chamado</th>
+                  <th>ATM</th>
+                  <th>Peça</th>
+                  <th>Destino</th>
+                  <th>Data</th>
+                </tr>
+              </thead>
+
+              <tbody id="bancada-body">
+                <tr>
+                  <td colspan="5">Carregando...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card-footer">
+            <button id="btnPdfBancada" class="btn-pdf">📄 Imprimir PDF</button>
+          </div>
         </div>
 
-        <div id="card-bancada" class="card-body">
-          <table class="tabela-dashboard">
-            <thead>
-              <tr>
-                <th>Chamado</th>
-                <th>ATM</th>
-                <th>Peça</th>
-                <th>Destino</th>
-                <th>Data</th>
-              </tr>
-            </thead>
+        <!-- VANDALISMO -->
 
-            <tbody id="bancada-body">
-              <tr>
-                <td colspan="5">Carregando...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <div class="card-dashboard">
+          <div class="card-header">
+            <h3>🚨 Vandalismo</h3>
+          </div>
 
-        <div class="card-footer">
-          <button id="btnPdfBancada" class="btn-pdf">📄 Imprimir PDF</button>
+          <div id="card-vandalismo" class="card-body">
+            <table class="tabela-dashboard">
+              <thead>
+                <tr>
+                  <th>Chamado</th>
+                  <th>ATM</th>
+                  <th>Peça</th>
+                  <th>Destino</th>
+                  <th>Data</th>
+                </tr>
+              </thead>
+
+              <tbody id="vandalismo-body">
+                <tr>
+                  <td colspan="5">Carregando...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card-footer">
+            <button id="btnPdfVandalismo" class="btn-pdf">
+              📄 Imprimir PDF
+            </button>
+          </div>
         </div>
       </div>
-
-      <!-- VANDALISMO -->
-
-      <div class="card-dashboard">
-        <div class="card-header">
-          <h3>🚨 Vandalismo</h3>
-        </div>
-
-        <div id="card-vandalismo" class="card-body">
-          <table class="tabela-dashboard">
-            <thead>
-              <tr>
-                <th>Chamado</th>
-                <th>ATM</th>
-                <th>Peça</th>
-                <th>Destino</th>
-                <th>Data</th>
-              </tr>
-            </thead>
-
-            <tbody id="vandalismo-body">
-              <tr>
-                <td colspan="5">Carregando...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="card-footer">
-          <button id="btnPdfVandalismo" class="btn-pdf">📄 Imprimir PDF</button>
-        </div>
-      </div>
-    </div>
-
+    </section>
     <section class="box">
       <h3>Últimas Movimentações</h3>
 
