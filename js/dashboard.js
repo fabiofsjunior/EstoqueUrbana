@@ -93,55 +93,40 @@ async function carregarUltimasMovimentacoes() {
 }
 
 async function carregarConsumoMensal() {
-
   const dados = await api("consumo");
 
   const labels = [];
   const valores = [];
 
   dados.forEach((item) => {
-
     let mes = item[0];
 
-    if (
-      typeof mes === "string" &&
-      mes.includes("T")
-    ) {
-
+    if (typeof mes === "string" && mes.includes("T")) {
       const data = new Date(mes);
 
       mes =
-        String(data.getMonth() + 1)
-          .padStart(2, "0") +
-        "/" +
-        data.getFullYear();
-
+        String(data.getMonth() + 1).padStart(2, "0") + "/" + data.getFullYear();
     }
 
     labels.push(mes);
 
     valores.push(item[1]);
-
   });
 
-  new Chart(
-    document.getElementById("graficoConsumo"),
-    {
-      type: "bar",
+  new Chart(document.getElementById("graficoConsumo"), {
+    type: "bar",
 
-      data: {
-        labels: labels,
+    data: {
+      labels: labels,
 
-        datasets: [
-          {
-            label: "Consumo Mensal",
-            data: valores
-          }
-        ]
-      }
-    }
-  );
-
+      datasets: [
+        {
+          label: "Consumo Mensal",
+          data: valores,
+        },
+      ],
+    },
+  });
 }
 
 async function carregarReparoPorLocal() {
@@ -385,7 +370,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-window.addEventListener("DOMContentLoaded", () => {
+function atualizarDashboard() {
   carregarIndicadores().catch(console.error);
   carregarTopATM().catch(console.error);
   carregarTopPecas().catch(console.error);
@@ -396,4 +381,19 @@ window.addEventListener("DOMContentLoaded", () => {
   carregarBancada().catch(console.error);
   carregarVandalismo().catch(console.error);
 
+  function atualizarHorario() {
+    const agora = new Date();
+
+    document.getElementById("ultimaAtualizacao").innerText =
+      "Atualizado às " + agora.toLocaleTimeString("pt-BR");
+  }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  atualizarDashboard();
+
+  setInterval(
+    atualizarDashboard,
+    600000, // 10 minutos
+  );
 });
