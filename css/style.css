@@ -120,7 +120,7 @@ canvas {
   display: flex;
   flex-direction: column;
 
-  min-height: 500px;
+  height: 500px;
 }
 
 .card-header {
@@ -140,10 +140,9 @@ canvas {
 
 .card-body {
   flex: 1;
-
   padding: 15px;
-
   overflow-y: auto;
+  overflow-x: auto;
 }
 
 .card-footer {
@@ -217,6 +216,23 @@ canvas {
 
 .btn-pdf:active {
   transform: translateY(0);
+}
+
+
+/* =======================================
+   SCROLL DAS TABELAS
+======================================= */
+
+.scroll-movimentacoes {
+  max-height: 420px; /* aproximadamente 10 linhas */
+  overflow-y: auto;
+}
+
+.scroll-movimentacoes thead th,
+.tabela-dashboard thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 /* =======================================
