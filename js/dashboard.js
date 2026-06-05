@@ -393,6 +393,7 @@ function atualizarDashboard() {
 
   // atualiza horário SEMPRE que atualizar o dashboard
   atualizarHorario();
+  document.location.reload
 }
 
 window.addEventListener("DOMContentLoaded", () => {
