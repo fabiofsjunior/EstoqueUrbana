@@ -192,6 +192,7 @@ async function carregarVandalismo() {
   tbody.innerHTML = "";
 
   dados.forEach((item) => {
+    console.log(item.data);
     tbody.innerHTML += `
       <tr>
         <td>${item.chamado}</td>
