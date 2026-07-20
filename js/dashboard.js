@@ -170,18 +170,22 @@ async function carregarBancada() {
   tbody.innerHTML = "";
 
   const hoje = new Date();
-  const mesAtual = hoje.getMonth() + 1;
-  const anoAtual = hoje.getFullYear();
 
   dados
+    // Apenas registros do mês atual
     .filter((item) => {
-      // Ex.: "08/07/2026 - 13:43"
-      const [data] = item.data.split(" - ");
+      const data = converterDataBR(item.data);
 
-      const [dia, mes, ano] = data.split("/").map(Number);
-
-      return mes === mesAtual && ano === anoAtual;
+      return (
+        data.getMonth() === hoje.getMonth() &&
+        data.getFullYear() === hoje.getFullYear()
+      );
     })
+
+    // Mais recente para o mais antigo
+    .sort((a, b) => converterDataBR(b.data) - converterDataBR(a.data))
+
+    // Renderização
     .forEach((item) => {
       tbody.innerHTML += `
         <tr>
@@ -416,6 +420,14 @@ function imprimirVandalismo() {
   setTimeout(() => {
     janela.print();
   }, 500);
+}
+
+function converterDataBR(dataHora) {
+  const [data, hora] = dataHora.split(" - ");
+  const [dia, mes, ano] = data.split("/").map(Number);
+  const [h, m] = hora.split(":").map(Number);
+
+  return new Date(ano, mes - 1, dia, h, m);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
