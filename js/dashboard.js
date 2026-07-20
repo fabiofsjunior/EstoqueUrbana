@@ -191,17 +191,56 @@ async function carregarVandalismo() {
 
   tbody.innerHTML = "";
 
-  dados.forEach((item) => {
-    tbody.innerHTML += `
+  const hoje = new Date();
+  const mesAtual = hoje.getMonth() + 1; // Janeiro = 1
+  const anoAtual = hoje.getFullYear();
+
+  console.log("Mês atual:", mesAtual);
+  console.log("Ano atual:", anoAtual);
+
+  dados
+    .filter((item) => {
+      // Ex.: "08/07/2026 - 13:43"
+      const [data] = item.data.split(" - ");
+
+      const [dia, mes, ano] = data.split("/").map(Number);
+
+      const exibir = mes === mesAtual && ano === anoAtual;
+
+      // console.log({
+      //   original: item.data,
+      //   dia,
+      //   mes,
+      //   ano,
+      //   mesAtual,
+      //   anoAtual,
+      //   exibir
+      // });
+
+      return exibir;
+    })
+    .forEach((item) => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${item.chamado}</td>
+          <td>${item.atm}</td>
+          <td>${item.peca}</td>
+          <td>${item.destino}</td>
+          <td>${item.data}</td>
+        </tr>
+      `;
+    });
+
+  // Caso não exista nenhum registro do mês atual
+  if (tbody.innerHTML === "") {
+    tbody.innerHTML = `
       <tr>
-        <td>${item.chamado}</td>
-        <td>${item.atm}</td>
-        <td>${item.peca}</td>
-        <td>${item.destino}</td>
-        <td>${item.data}</td>
+        <td colspan="5" style="text-align:center;">
+          Nenhum registro encontrado para este mês.
+        </td>
       </tr>
     `;
-  });
+  }
 }
 
 function imprimirBancada() {
