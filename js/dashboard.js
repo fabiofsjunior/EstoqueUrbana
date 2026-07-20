@@ -169,17 +169,40 @@ async function carregarBancada() {
 
   tbody.innerHTML = "";
 
-  dados.forEach((item) => {
-    tbody.innerHTML += `
+  const hoje = new Date();
+  const mesAtual = hoje.getMonth() + 1;
+  const anoAtual = hoje.getFullYear();
+
+  dados
+    .filter((item) => {
+      // Ex.: "08/07/2026 - 13:43"
+      const [data] = item.data.split(" - ");
+
+      const [dia, mes, ano] = data.split("/").map(Number);
+
+      return mes === mesAtual && ano === anoAtual;
+    })
+    .forEach((item) => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${item.chamado}</td>
+          <td>${item.atm}</td>
+          <td>${item.peca}</td>
+          <td>${item.destino}</td>
+          <td>${item.data}</td>
+        </tr>
+      `;
+    });
+
+  if (tbody.innerHTML === "") {
+    tbody.innerHTML = `
       <tr>
-        <td>${item.chamado}</td>
-        <td>${item.atm}</td>
-        <td>${item.peca}</td>
-        <td>${item.destino}</td>
-        <td>${item.data}</td>
+        <td colspan="5" style="text-align:center;">
+          Nenhum reparo encontrado neste mês.
+        </td>
       </tr>
     `;
-  });
+  }
 }
 
 async function carregarVandalismo() {
