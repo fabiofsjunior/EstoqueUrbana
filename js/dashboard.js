@@ -207,15 +207,15 @@ async function carregarVandalismo() {
 
       const exibir = mes === mesAtual && ano === anoAtual;
 
-      console.log({
-        original: item.data,
-        dia,
-        mes,
-        ano,
-        mesAtual,
-        anoAtual,
-        exibir
-      });
+      // console.log({
+      //   original: item.data,
+      //   dia,
+      //   mes,
+      //   ano,
+      //   mesAtual,
+      //   anoAtual,
+      //   exibir
+      // });
 
       return exibir;
     })
