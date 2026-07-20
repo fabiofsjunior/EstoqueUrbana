@@ -84,7 +84,6 @@ async function carregarUltimasMovimentacoes() {
         <td>${item[1]}</td>
         <td>${item[2]}</td>
         <td>${item[3]}</td>
-        <td>${item[4]}</td>
       </tr>
     `;
   });
