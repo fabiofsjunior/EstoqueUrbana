@@ -219,33 +219,22 @@ async function carregarVandalismo() {
   tbody.innerHTML = "";
 
   const hoje = new Date();
-  const mesAtual = hoje.getMonth() + 1; // Janeiro = 1
-  const anoAtual = hoje.getFullYear();
-
-  console.log("Mês atual:", mesAtual);
-  console.log("Ano atual:", anoAtual);
 
   dados
+    // Apenas registros do mês atual
     .filter((item) => {
-      // Ex.: "08/07/2026 - 13:43"
-      const [data] = item.data.split(" - ");
+      const data = converterDataBR(item.data);
 
-      const [dia, mes, ano] = data.split("/").map(Number);
-
-      const exibir = mes === mesAtual && ano === anoAtual;
-
-      // console.log({
-      //   original: item.data,
-      //   dia,
-      //   mes,
-      //   ano,
-      //   mesAtual,
-      //   anoAtual,
-      //   exibir
-      // });
-
-      return exibir;
+      return (
+        data.getMonth() === hoje.getMonth() &&
+        data.getFullYear() === hoje.getFullYear()
+      );
     })
+
+    // Ordena do mais recente para o mais antigo
+    .sort((a, b) => converterDataBR(b.data) - converterDataBR(a.data))
+
+    // Renderiza os registros
     .forEach((item) => {
       tbody.innerHTML += `
         <tr>
