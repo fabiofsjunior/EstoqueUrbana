@@ -22,28 +22,33 @@
     <section class="cards">
       <div class="card">
         <h2 id="totalEstoque">0</h2>
-        <p>Itens em Estoque</p>
+        <p>📦 Itens em Estoque</p>
       </div>
 
       <div class="card">
         <h2 id="trocasMes">0</h2>
-        <p>Trocas do Mês</p>
+        <p>🔁 Trocas do Mês</p>
       </div>
 
       <div class="card">
         <h2 id="vandalismos">0</h2>
-        <p>Vandalismos</p>
+        <p>🕴🏻 Vandalismos</p>
       </div>
 
       <div class="card">
         <h2 id="defeitos">0</h2>
-        <p>Defeitos</p>
+        <p>🔧 Defeitos</p>
       </div>
+    </section>
+
+    <section class="box">
+      <h3>HISTÓRICO DE MOVIMENTAÇÕES</h3>
+      <canvas id="graficoConsumo"></canvas>
     </section>
 
     <section class="painel">
       <div class="box">
-        <h3>Top 10 Peças Mais Trocadas</h3>
+        <h3>TOP 10 PEÇAS COM MAIS TROCAS</h3>
 
         <table>
           <thead>
@@ -57,7 +62,7 @@
       </div>
 
       <div class="box">
-        <h3>Top 10 ATM com Mais Trocas</h3>
+        <h3>TOP 10 ATM's COM MAIS TROCAS</h3>
         <table>
           <thead>
             <tr>
@@ -72,7 +77,7 @@
 
     <section class="painel">
       <div class="box">
-        <h3>Motivos das Trocas</h3>
+        <h3>MOTIVOS DAS TROCAS</h3>
         <table>
           <thead>
             <tr>
@@ -85,7 +90,7 @@
       </div>
 
       <div class="box">
-        <h3>Reparo por Local</h3>
+        <h3>REPARO POR LABORATÓRIO</h3>
 
         <table>
           <thead>
@@ -99,21 +104,19 @@
       </div>
     </section>
 
-    <section class="box">
-      <h3>Consumo Mensal</h3>
-      <canvas id="graficoConsumo"></canvas>
-    </section>
-    <section class="box">
+    <section>
       <div class="cards-listagem">
         <!-- REPAROS EM BANCADA -->
 
-        <div class="card-dashboard">
-          <div class="card-header">
-            <h3>🔧 Reparos em Bancada</h3>
+        <section class="box">
+          <h3>🔧 REPAROS EM BANCADAS DO MÊS</h3>
+
+          <div class="toolbar">
+            <button id="btnPdfBancada" class="btn-pdf">📄 Imprimir PDF</button>
           </div>
 
-          <div id="card-bancada" class="card-body">
-            <table class="tabela-dashboard">
+          <div class="scroll-movimentacoes">
+            <table>
               <thead>
                 <tr>
                   <th>Chamado</th>
@@ -131,21 +134,21 @@
               </tbody>
             </table>
           </div>
+        </section>
 
-          <div class="card-footer">
-            <button id="btnPdfBancada" class="btn-pdf">📄 Imprimir PDF</button>
+        <!-- VANDALISMOS -->
+
+        <section class="box">
+          <h3>🚨 VANDALISMOS DO MÊS</h3>
+
+          <div class="toolbar">
+            <button id="btnPdfVandalismo" class="btn-pdf">
+              📄 Imprimir PDF
+            </button>
           </div>
-        </div>
 
-        <!-- VANDALISMO -->
-
-        <div class="card-dashboard">
-          <div class="card-header">
-            <h3>🚨 Vandalismo</h3>
-          </div>
-
-          <div id="card-vandalismo" class="card-body">
-            <table class="tabela-dashboard">
+          <div class="scroll-movimentacoes">
+            <table>
               <thead>
                 <tr>
                   <th>Chamado</th>
@@ -163,17 +166,12 @@
               </tbody>
             </table>
           </div>
-
-          <div class="card-footer">
-            <button id="btnPdfVandalismo" class="btn-pdf">
-              📄 Imprimir PDF
-            </button>
-          </div>
-        </div>
+        </section>
       </div>
     </section>
+
     <section class="box">
-      <h3>Últimas Movimentações</h3>
+      <h3>TODAS AS ÚLTIMAS MOVIMENTAÇÕES</h3>
       <div class="scroll-movimentacoes">
         <table>
           <thead>
@@ -190,6 +188,39 @@
       </div>
     </section>
 
+    <section class="box">
+      <h3>📦 Solicitação de Reposição</h3>
+
+      <div class="acoes-reposicao">
+        <input
+          id="filtroReposicao"
+          type="text"
+          placeholder="🔎 Buscar peça..."
+        />
+
+        <button id="btnSelecionarTodos" class="btn-pdf">
+          ☑ Selecionar todos
+        </button>
+
+        <button id="btnPdfReposicao" class="btn-pdf">📄 Imprimir PDF</button>
+      </div>
+
+      <div class="scroll-movimentacoes">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Código</th>
+              <th>Descrição</th>
+              <th>Saldo</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody id="reposicao-body"></tbody>
+        </table>
+      </div>
+    </section>
     <script src="js/api.js"></script>
     <script src="js/dashboard.js"></script>
   </body>

@@ -3,7 +3,7 @@
   padding: 0;
   box-sizing: border-box;
   font-family:
-    Segoe UI,
+    "Segoe UI",
     sans-serif;
 }
 
@@ -11,6 +11,10 @@ body {
   background: #f4f6f9;
   padding: 20px;
 }
+
+/* =======================================
+   CABEÇALHO
+======================================= */
 
 header {
   text-align: center;
@@ -26,20 +30,22 @@ header p {
   margin-top: 5px;
 }
 
+/* =======================================
+   CARDS SUPERIORES
+======================================= */
+
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 15px;
-
   margin-bottom: 20px;
 }
 
 .card {
-  background: white;
+  background: #fff;
   border-radius: 12px;
   padding: 20px;
   text-align: center;
-
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -53,160 +59,148 @@ header p {
   font-weight: 600;
 }
 
+/* =======================================
+   PAINÉIS
+======================================= */
+
 .painel {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
-
   margin-bottom: 20px;
 }
 
+/* =======================================
+   BOX PADRÃO
+======================================= */
+
 .box {
-  background: white;
+  background: #fff;
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  overflow: auto;
   margin-bottom: 20px;
 }
 
 .box h3 {
   margin-bottom: 15px;
-
   color: #333;
 }
+
+/* =======================================
+   TABELAS
+======================================= */
 
 table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 14px;
 }
 
 table th {
   background: #005bbb;
-  color: white;
-
+  color: #fff;
   padding: 10px;
+  text-align: left;
 }
 
 table td {
-  padding: 8px;
+  padding: 10px;
   border-bottom: 1px solid #ddd;
 }
 
-table tr:hover {
-  background: #f0f0f0;
+table tbody tr:hover {
+  background: #f5f5f5;
 }
 
-canvas {
-  max-height: 350px;
-}
 /* =======================================
-   CARDS DE LISTAGEM
+   SCROLL DAS LISTAGENS
+======================================= */
+
+.scroll-movimentacoes {
+  max-height: 420px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.scroll-movimentacoes thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* =======================================
+   LISTAGENS LADO A LADO
 ======================================= */
 
 .cards-listagem {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
-  margin-bottom: 20px;
-}
-
-.card-dashboard {
-  background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-
-  display: flex;
-  flex-direction: column;
-
-  height: 500px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  padding: 16px 20px;
-
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.card-header h3 {
-  margin: 0;
-  color: #1f2937;
-}
-
-.card-body {
-  flex: 1;
-  padding: 15px;
-  overflow-y: auto;
-  overflow-x: auto;
-}
-
-.card-footer {
-  display: flex;
-  justify-content: flex-end;
-
-  padding: 15px 20px;
-
-  border-top: 1px solid #e5e7eb;
 }
 
 /* =======================================
-   TABELA DOS CARDS
+   TOOLBAR (BOTÕES)
 ======================================= */
 
-.tabela-dashboard {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-.tabela-dashboard thead th {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-
-  background: #f3f4f6;
-  color: #374151;
-
-  text-align: left;
-
-  padding: 10px;
-
-  border-bottom: 2px solid #e5e7eb;
-}
-
-.tabela-dashboard td {
-  padding: 10px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.tabela-dashboard tbody tr:hover {
-  background: #f9fafb;
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
 /* =======================================
-   BOTÃO PDF
+   REPOSIÇÃO
+======================================= */
+
+.acoes-reposicao {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.acoes-reposicao input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+  transition: border-color .2s;
+}
+
+.acoes-reposicao input:focus {
+  border-color: #005bbb;
+}
+
+.status-zero {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.status-baixo {
+  color: #d97706;
+  font-weight: bold;
+}
+
+/* =======================================
+   BOTÕES
 ======================================= */
 
 .btn-pdf {
   background: #005bbb;
-  color: white;
-
+  color: #fff;
   border: none;
   border-radius: 8px;
-
   padding: 10px 16px;
-
   font-size: 14px;
   font-weight: 600;
-
   cursor: pointer;
-
-  transition: 0.2s;
+  transition:
+    background .2s,
+    transform .15s;
 }
 
 .btn-pdf:hover {
@@ -218,21 +212,12 @@ canvas {
   transform: translateY(0);
 }
 
-
 /* =======================================
-   SCROLL DAS TABELAS
+   GRÁFICOS
 ======================================= */
 
-.scroll-movimentacoes {
-  max-height: 420px; /* aproximadamente 10 linhas */
-  overflow-y: auto;
-}
-
-.scroll-movimentacoes thead th,
-.tabela-dashboard thead th {
-  position: sticky;
-  top: 0;
-  z-index: 2;
+canvas {
+  max-height: 350px;
 }
 
 /* =======================================
@@ -249,9 +234,21 @@ canvas {
   .painel {
     grid-template-columns: 1fr;
   }
-}
-@media (max-width: 900px) {
-  .painel {
-    grid-template-columns: 1fr;
+
+  .acoes-reposicao {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toolbar {
+    justify-content: stretch;
+  }
+
+  .toolbar .btn-pdf {
+    width: 100%;
+  }
+
+  .acoes-reposicao .btn-pdf {
+    width: 100%;
   }
 }
