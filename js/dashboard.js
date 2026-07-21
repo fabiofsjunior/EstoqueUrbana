@@ -120,7 +120,7 @@ async function carregarConsumoMensal() {
 
       datasets: [
         {
-          label: "Consumo Mensal",
+          label: "Nº de Trocas",
           data: valores,
         },
       ],
