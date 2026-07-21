@@ -84,7 +84,6 @@ async function carregarUltimasMovimentacoes() {
         <td>${item[1]}</td>
         <td>${item[2]}</td>
         <td>${item[3]}</td>
-        <td>${item[4]}</td>
       </tr>
     `;
   });
@@ -121,7 +120,7 @@ async function carregarConsumoMensal() {
 
       datasets: [
         {
-          label: "Consumo Mensal",
+          label: "Nº de Trocas",
           data: valores,
         },
       ],
@@ -169,17 +168,44 @@ async function carregarBancada() {
 
   tbody.innerHTML = "";
 
-  dados.forEach((item) => {
-    tbody.innerHTML += `
+  const hoje = new Date();
+
+  dados
+    // Apenas registros do mês atual
+    .filter((item) => {
+      const data = converterDataBR(item.data);
+
+      return (
+        data.getMonth() === hoje.getMonth() &&
+        data.getFullYear() === hoje.getFullYear()
+      );
+    })
+
+    // Mais recente para o mais antigo
+    .sort((a, b) => converterDataBR(b.data) - converterDataBR(a.data))
+
+    // Renderização
+    .forEach((item) => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${item.chamado}</td>
+          <td>${item.atm}</td>
+          <td>${item.peca}</td>
+          <td>${item.destino}</td>
+          <td>${item.data}</td>
+        </tr>
+      `;
+    });
+
+  if (tbody.innerHTML === "") {
+    tbody.innerHTML = `
       <tr>
-        <td>${item.chamado}</td>
-        <td>${item.atm}</td>
-        <td>${item.peca}</td>
-        <td>${item.destino}</td>
-        <td>${item.data}</td>
+        <td colspan="5" style="text-align:center;">
+          Nenhum reparo encontrado neste mês.
+        </td>
       </tr>
     `;
-  });
+  }
 }
 
 async function carregarVandalismo() {
@@ -192,33 +218,22 @@ async function carregarVandalismo() {
   tbody.innerHTML = "";
 
   const hoje = new Date();
-  const mesAtual = hoje.getMonth() + 1; // Janeiro = 1
-  const anoAtual = hoje.getFullYear();
-
-  console.log("Mês atual:", mesAtual);
-  console.log("Ano atual:", anoAtual);
 
   dados
+    // Apenas registros do mês atual
     .filter((item) => {
-      // Ex.: "08/07/2026 - 13:43"
-      const [data] = item.data.split(" - ");
+      const data = converterDataBR(item.data);
 
-      const [dia, mes, ano] = data.split("/").map(Number);
-
-      const exibir = mes === mesAtual && ano === anoAtual;
-
-      // console.log({
-      //   original: item.data,
-      //   dia,
-      //   mes,
-      //   ano,
-      //   mesAtual,
-      //   anoAtual,
-      //   exibir
-      // });
-
-      return exibir;
+      return (
+        data.getMonth() === hoje.getMonth() &&
+        data.getFullYear() === hoje.getFullYear()
+      );
     })
+
+    // Ordena do mais recente para o mais antigo
+    .sort((a, b) => converterDataBR(b.data) - converterDataBR(a.data))
+
+    // Renderiza os registros
     .forEach((item) => {
       tbody.innerHTML += `
         <tr>
@@ -395,6 +410,143 @@ function imprimirVandalismo() {
   }, 500);
 }
 
+function imprimirReposicao() {
+  const linhasSelecionadas = [];
+
+  document.querySelectorAll("#reposicao-body tr").forEach((tr) => {
+    const checkbox = tr.querySelector(".checkReposicao");
+
+    if (checkbox && checkbox.checked) {
+      const colunas = tr.querySelectorAll("td");
+
+      linhasSelecionadas.push({
+        codigo: colunas[1].textContent.trim(),
+        descricao: colunas[2].textContent.trim(),
+        saldo: colunas[3].textContent.trim(),
+        status: colunas[4].textContent.trim(),
+      });
+    }
+  });
+
+  if (linhasSelecionadas.length === 0) {
+    alert("Selecione pelo menos uma peça.");
+    return;
+  }
+
+  const htmlLinhas = linhasSelecionadas
+    .map(
+      (item) => `
+    <tr>
+      <td>${item.codigo}</td>
+      <td>${item.descricao}</td>
+      <td style="text-align:center;">${item.saldo}</td>
+      <td>${item.status}</td>
+    </tr>
+  `,
+    )
+    .join("");
+
+  const janela = window.open("", "_blank");
+
+  if (!janela) {
+    alert("O navegador bloqueou a abertura da janela de impressão.");
+    return;
+  }
+
+  janela.document.write(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>Solicitação de Reposição</title>
+
+        <style>
+
+          body{
+            font-family:Arial,sans-serif;
+            padding:25px;
+          }
+
+          h2{
+            margin-bottom:5px;
+          }
+
+          p{
+            margin-bottom:20px;
+            color:#666;
+          }
+
+          table{
+            width:100%;
+            border-collapse:collapse;
+          }
+
+          th{
+            background:#005bbb;
+            color:white;
+          }
+
+          th,td{
+            border:1px solid #ccc;
+            padding:8px;
+          }
+
+        </style>
+
+      </head>
+
+      <body>
+
+        <h2>Solicitação de Reposição de Estoque</h2>
+
+        <p>Data: ${new Date().toLocaleString("pt-BR")}</p>
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>Código</th>
+              <th>Descrição</th>
+              <th>Saldo</th>
+              <th>Status</th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            ${htmlLinhas}
+
+          </tbody>
+
+        </table>
+
+      </body>
+
+    </html>
+  `);
+
+  janela.document.close();
+
+  janela.focus();
+
+  setTimeout(() => {
+    janela.print();
+    janela.close();
+  }, 500);
+}
+
+function converterDataBR(dataHora) {
+  const [data, hora] = dataHora.split(" - ");
+  const [dia, mes, ano] = data.split("/").map(Number);
+  const [h, m] = hora.split(":").map(Number);
+
+  return new Date(ano, mes - 1, dia, h, m);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const btnBancada = document.getElementById("btnPdfBancada");
 
@@ -419,6 +571,171 @@ function atualizarHorario() {
   el.innerText = "Atualizado às " + agora.toLocaleTimeString("pt-BR");
 }
 
+let pecasReposicao = [];
+let pecasReposicaoOriginal = [];
+
+async function carregarReposicao() {
+  try {
+    const dados = await api("reposicao");
+
+    pecasReposicaoOriginal = [...dados];
+
+    renderReposicao(dados);
+  } catch (erro) {
+    console.error("Erro ao carregar peças para reposição:", erro);
+  }
+}
+
+function renderReposicao(lista) {
+  const tbody = document.getElementById("reposicao-body");
+
+  if (!tbody) {
+    console.error("Elemento #reposicao-body não encontrado");
+
+    return;
+  }
+
+  if (!Array.isArray(lista)) {
+    console.error("Dados de reposição inválidos:", lista);
+
+    return;
+  }
+
+  pecasReposicao = [...lista];
+  // limpa tabela antes de renderizar
+
+  tbody.innerHTML = "";
+
+  // caso não tenha peças
+
+  if (lista.length === 0) {
+    tbody.innerHTML = `
+
+      <tr>
+
+        <td colspan="5" style="text-align:center">
+
+          Nenhuma peça necessita reposição 🎉
+
+        </td>
+
+      </tr>
+
+    `;
+
+    return;
+  }
+
+  let html = "";
+
+  lista.forEach((item, index) => {
+    const saldo = Number(item.saldo || 0);
+
+    html += `
+
+      <tr>
+
+
+        <td>
+
+          <input
+
+            type="checkbox"
+
+            class="checkReposicao"
+
+            data-index="${index}"
+
+          >
+
+        </td>
+
+
+
+        <td>
+
+          ${item.codigo ?? "-"}
+
+        </td>
+
+
+
+        <td>
+
+          ${item.descricao ?? "-"}
+
+        </td>
+
+
+
+        <td>
+
+          ${saldo}
+
+        </td>
+
+
+
+        <td class="${saldo === 0 ? "status-zero" : "status-baixo"}">
+
+
+          ${saldo === 0 ? "ZERADO" : "ESTOQUE BAIXO"}
+
+
+        </td>
+
+
+
+      </tr>
+
+    `;
+  });
+
+  tbody.innerHTML = html;
+}
+
+// ================================
+// FILTRO DE PEÇAS PARA REPOSIÇÃO
+// ================================
+
+document
+  .getElementById("filtroReposicao")
+  .addEventListener("keyup", function () {
+    const texto = this.value.trim().toLowerCase();
+
+    // Se o campo estiver vazio, volta a lista completa
+    if (texto === "") {
+      renderReposicao(pecasReposicaoOriginal);
+      return;
+    }
+
+    const filtrado = pecasReposicaoOriginal.filter((item) => {
+      return (
+        String(item.codigo).toLowerCase().includes(texto) ||
+        String(item.descricao).toLowerCase().includes(texto) ||
+        String(item.status).toLowerCase().includes(texto)
+      );
+    });
+
+    renderReposicao(filtrado);
+  });
+
+const btnSelecionarTodos = document.getElementById("btnSelecionarTodos");
+
+btnSelecionarTodos.addEventListener("click", () => {
+  const checks = document.querySelectorAll(".checkReposicao");
+
+  const marcar = [...checks].some((cb) => !cb.checked);
+
+  checks.forEach((cb) => {
+    cb.checked = marcar;
+  });
+
+  btnSelecionarTodos.innerHTML = marcar
+    ? "☐ Desmarcar todos"
+    : "☑ Selecionar todos";
+});
+
 function atualizarDashboard() {
   carregarIndicadores().catch(console.error);
   carregarTopATM().catch(console.error);
@@ -429,14 +746,16 @@ function atualizarDashboard() {
   carregarReparoPorLocal().catch(console.error);
   carregarBancada().catch(console.error);
   carregarVandalismo().catch(console.error);
+  carregarReposicao().catch(console.error);
 
   // atualiza horário SEMPRE que atualizar o dashboard
   atualizarHorario();
-  document.location.reload
+  document.location.reload;
 }
 
 window.addEventListener("DOMContentLoaded", () => {
   atualizarDashboard();
+  document.getElementById("btnPdfReposicao").onclick = imprimirReposicao;
 
   setInterval(() => {
     atualizarDashboard();
