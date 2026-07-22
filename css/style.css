@@ -301,3 +301,121 @@ canvas {
     padding: 8px 12px;
   }
 }
+/*=====================================================
+  ACCORDION
+=====================================================*/
+
+.accordion{
+
+    width:100%;
+
+    margin:20px 0;
+
+    border:none;
+
+    border-radius:12px;
+
+    overflow:hidden;
+
+    background:transparent;
+
+}
+
+.accordion summary{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    width:100%;
+
+    cursor:pointer;
+
+    list-style:none;
+
+    appearance:none;
+
+    -webkit-appearance:none;
+
+    user-select:none;
+
+    padding:18px 22px;
+
+    background:#005bbb;
+
+    color:#fff;
+
+    font-size:18px;
+
+    font-weight:600;
+
+    border-radius:12px;
+
+    transition:.25s;
+
+}
+
+.accordion summary:hover{
+
+    background:#00479a;
+
+}
+
+.accordion summary::-webkit-details-marker{
+
+    display:none;
+
+}
+
+.accordion summary::marker{
+
+    content:"";
+
+}
+
+.accordion summary::after{
+
+    content:"▼";
+
+    font-size:14px;
+
+    transition:.3s;
+
+}
+
+.accordion[open] summary::after{
+
+    transform:rotate(180deg);
+
+}
+
+.accordion-content{
+
+    padding-top:15px;
+
+    animation:fadeAccordion .25s ease;
+
+}
+
+@keyframes fadeAccordion{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(-8px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+}

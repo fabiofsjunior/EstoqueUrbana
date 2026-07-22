@@ -17,8 +17,10 @@
       <p>Controle de Peças, Reparos e Chamados</p>
     </header>
 
+    <!-- Data da última atualização: -->
     <p id="ultimaAtualizacao"></p>
 
+    <!-- CARDS -->
     <section class="cards">
       <div class="card">
         <h2 id="totalEstoque">0</h2>
@@ -41,108 +43,215 @@
       </div>
     </section>
 
+    <!-- HISTÓRICO DE MOVIMENTAÇÕES -->
     <section class="box">
       <h3>HISTÓRICO DE MOVIMENTAÇÕES</h3>
       <canvas id="graficoConsumo"></canvas>
     </section>
 
-    <section class="painel">
-      <div class="box">
-        <h3>TOP 10 PEÇAS COM MAIS TROCAS</h3>
+    <!-- 📊 Estatísticas e Rankings -->
+    <details class="accordion">
+      <summary>📊 Estatísticas e Rankings</summary>
 
-        <table>
-          <thead>
-            <tr>
-              <th>Peça</th>
-              <th>Qtd</th>
-            </tr>
-          </thead>
-          <tbody id="topPecas"></tbody>
-        </table>
-      </div>
+      <div class="accordion-content">
+        <!-- ===========================================
+         TOP 10
+    ============================================ -->
 
-      <div class="box">
-        <h3>TOP 10 ATM's COM MAIS TROCAS</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>ATM</th>
-              <th>Qtd</th>
-            </tr>
-          </thead>
-          <tbody id="topATM"></tbody>
-        </table>
-      </div>
-    </section>
+        <section class="painel">
+          <div class="box">
+            <h3>🏆 Top 10 Peças com Mais Trocas</h3>
 
-    <section class="painel">
-      <div class="box">
-        <h3>MOTIVOS DAS TROCAS</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Motivo</th>
-              <th>Qtd</th>
-            </tr>
-          </thead>
-          <tbody id="motivos-body"></tbody>
-        </table>
-      </div>
-
-      <div class="box">
-        <h3>REPARO POR LABORATÓRIO</h3>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Destino</th>
-              <th>Qtd</th>
-            </tr>
-          </thead>
-          <tbody id="reparoLocal"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section>
-      <div class="cards-listagem">
-        <!-- REPAROS EM BANCADA -->
-
-        <section class="box">
-          <h3>🔧 REPAROS EM BANCADAS DO MÊS</h3>
-
-          <div class="toolbar">
-            <button id="btnPdfBancada" class="btn-pdf">📄 Imprimir PDF</button>
-          </div>
-
-          <div class="scroll-movimentacoes">
             <table>
               <thead>
                 <tr>
-                  <th>Chamado</th>
-                  <th>ATM</th>
                   <th>Peça</th>
-                  <th>Destino</th>
-                  <th>Data</th>
+
+                  <th>Qtd</th>
                 </tr>
               </thead>
 
-              <tbody id="bancada-body">
+              <tbody id="topPecas"></tbody>
+            </table>
+          </div>
+
+          <div class="box">
+            <h3>🏧 Top 10 ATM's com Mais Trocas</h3>
+
+            <table>
+              <thead>
                 <tr>
-                  <td colspan="5">Carregando...</td>
+                  <th>ATM</th>
+
+                  <th>Qtd</th>
                 </tr>
-              </tbody>
+              </thead>
+
+              <tbody id="topATM"></tbody>
             </table>
           </div>
         </section>
 
-        <!-- VANDALISMOS -->
+        <!-- ===========================================
+         INDICADORES
+    ============================================ -->
 
+        <section class="painel">
+          <div class="box">
+            <h3>📋 Motivos das Trocas</h3>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Motivo</th>
+
+                  <th>Qtd</th>
+                </tr>
+              </thead>
+
+              <tbody id="motivos-body"></tbody>
+            </table>
+          </div>
+
+          <div class="box">
+            <h3>🏢 Reparo por Laboratório</h3>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Destino</th>
+
+                  <th>Qtd</th>
+                </tr>
+              </thead>
+
+              <tbody id="reparoLocal"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </details>
+    <!-- 🚨 Ocorrências do Mês -->
+    <details class="accordion">
+      <summary>🚨 Ocorrências do Mês</summary>
+
+      <div class="accordion-content">
+        <section>
+          <div class="cards-listagem">
+            <!-- ==============================
+             REPAROS EM BANCADA
+        =============================== -->
+
+            <section class="box">
+              <h3>🔧 Reparos em Bancada</h3>
+
+              <div class="toolbar">
+                <button id="btnPdfBancada" class="btn-pdf">
+                  📄 Imprimir PDF
+                </button>
+              </div>
+
+              <div class="scroll-movimentacoes">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Chamado</th>
+                      <th>ATM</th>
+                      <th>Peça</th>
+                      <th>Destino</th>
+                      <th>Data</th>
+                    </tr>
+                  </thead>
+
+                  <tbody id="bancada-body">
+                    <tr>
+                      <td colspan="5">Carregando...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <!-- ==============================
+             VANDALISMOS
+        =============================== -->
+
+            <section class="box">
+              <h3>🚨 Vandalismos do Mês</h3>
+
+              <div class="toolbar">
+                <button id="btnPdfVandalismo" class="btn-pdf">
+                  📄 Imprimir PDF
+                </button>
+              </div>
+
+              <div class="scroll-movimentacoes">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Chamado</th>
+                      <th>ATM</th>
+                      <th>Peça</th>
+                      <th>Destino</th>
+                      <th>Data</th>
+                    </tr>
+                  </thead>
+
+                  <tbody id="vandalismo-body">
+                    <tr>
+                      <td colspan="5">Carregando...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </section>
+      </div>
+    </details>
+
+    <!-- 📝 Últimas Movimentações -->
+    <details class="accordion">
+      <summary>📝 Últimas Movimentações</summary>
+
+      <div class="accordion-content">
         <section class="box">
-          <h3>🚨 VANDALISMOS DO MÊS</h3>
+          <div class="scroll-movimentacoes">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Chamado</th>
+                  <th>ATM</th>
+                  <th>Peça</th>
+                </tr>
+              </thead>
 
-          <div class="toolbar">
-            <button id="btnPdfVandalismo" class="btn-pdf">
+              <tbody id="ultimasMov"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </details>
+
+    <!-- 📦 Solicitação de Reposição -->
+    <details class="accordion">
+      <summary>📦 Situação do Estoque/Reposição</summary>
+
+      <div class="accordion-content">
+        <section class="box">
+          <div class="acoes-reposicao">
+            <input
+              id="filtroReposicao"
+              type="text"
+              placeholder="🔎 Buscar peça..."
+            />
+
+            <button id="btnSelecionarTodos" class="btn-pdf">
+              ☑ Selecionar todos
+            </button>
+
+            <button id="btnPdfReposicao" class="btn-pdf">
               📄 Imprimir PDF
             </button>
           </div>
@@ -151,76 +260,25 @@
             <table>
               <thead>
                 <tr>
-                  <th>Chamado</th>
-                  <th>ATM</th>
-                  <th>Peça</th>
-                  <th>Destino</th>
-                  <th>Data</th>
+                  <th></th>
+
+                  <th>Código</th>
+
+                  <th>Descrição</th>
+
+                  <th>Saldo</th>
+
+                  <th>Status</th>
                 </tr>
               </thead>
 
-              <tbody id="vandalismo-body">
-                <tr>
-                  <td colspan="5">Carregando...</td>
-                </tr>
-              </tbody>
+              <tbody id="reposicao-body"></tbody>
             </table>
           </div>
         </section>
       </div>
-    </section>
+    </details>
 
-    <section class="box">
-      <h3>TODAS AS ÚLTIMAS MOVIMENTAÇÕES</h3>
-      <div class="scroll-movimentacoes">
-        <table>
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Chamado</th>
-              <th>ATM</th>
-              <th>Peça</th>
-            </tr>
-          </thead>
-
-          <tbody id="ultimasMov"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="box">
-      <h3>📦 Solicitação de Reposição</h3>
-
-      <div class="acoes-reposicao">
-        <input
-          id="filtroReposicao"
-          type="text"
-          placeholder="🔎 Buscar peça..."
-        />
-
-        <button id="btnSelecionarTodos" class="btn-pdf">
-          ☑ Selecionar todos
-        </button>
-
-        <button id="btnPdfReposicao" class="btn-pdf">📄 Imprimir PDF</button>
-      </div>
-
-      <div class="scroll-movimentacoes">
-        <table>
-          <thead>
-            <tr>
-              <th></th>
-              <th>Código</th>
-              <th>Descrição</th>
-              <th>Saldo</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-
-          <tbody id="reposicao-body"></tbody>
-        </table>
-      </div>
-    </section>
     <script src="js/api.js"></script>
     <script src="js/dashboard.js"></script>
   </body>
