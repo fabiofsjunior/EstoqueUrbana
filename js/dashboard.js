@@ -1,14 +1,93 @@
 async function carregarIndicadores() {
   const dados = await api("indicadores");
 
-  document.getElementById("totalEstoque").innerText = dados.Total_Itens_Estoque;
+  // ==========================
+  // Valores
+  // ==========================
 
-  document.getElementById("trocasMes").innerText = dados.Trocas_Mes;
+  document.getElementById("totalItens").innerText =
+    dados.Total_Itens_Estoque ?? 0;
 
-  document.getElementById("vandalismos").innerText = dados.Vandalismos_Mes;
+  document.getElementById("totalPecasMaisTrocadaQtd").innerText =
+    dados.Peca_Mais_Trocada_QTD ?? 0;
 
-  document.getElementById("defeitos").innerText = dados.Defeitos_Mes;
+  document.getElementById("totalPecasMaisTrocadaNome").innerText =
+    dados.Peca_Mais_Trocada ?? 0;
+
+  document.getElementById("trocasMes").innerText = dados.Trocas_Mes ?? 0;
+
+  document.getElementById("estoqueCritico").innerText =
+    dados.Estoque_Critico ?? 0;
+
+  document.getElementById("vandalismos").innerText = dados.Vandalismos_Mes ?? 0;
+
+  document.getElementById("defeitos").innerText = dados.Defeitos_Mes ?? 0;
+
+  document.getElementById("bancada").innerText = dados.Bancada ?? 0;
+
+  document.getElementById("bancadaLocal").innerText =
+    dados.Laboratorio_Maior_Volume ?? 0;
+
+  document.getElementById("atmCriticoQTD").innerText =
+    dados.ATM_Mais_Problematico_QTD ?? "-";
+
+  document.getElementById("atmCritico").innerText =
+    dados.ATM_Mais_Problematico ?? "-";
+
+  document.getElementById("atmTrend").innerHTML =
+    `${dados.ATM_Mais_Problematico_QTD} chamados  `;
+
+  // ==========================
+  // Tendências
+  // ==========================
+
+  atualizarTrend("trocasTrend", dados.Trocas_Variacao);
+
+  atualizarTrend("defeitosTrend", dados.Defeitos_Variacao);
+
+  atualizarTrend("vandalismosTrend", dados.Vandalismos_Variacao);
+
+  // Não possuem comparação ainda
+
+  document.getElementById("totalItensTrend").innerHTML = "Estoque Atual";
+
+  document.getElementById("totalPecasTrend").innerHTML = "Peça mais trocada";
+
+  document.getElementById("estoqueTrend").innerHTML =
+    dados.Estoque_Critico + " abaixo do mínimo";
+
+  document.getElementById("bancadaTrend").innerHTML =
+    "LAB com maior movimentação";
+
+  document.getElementById("atmTrend").innerHTML = "Maior Nº de chamados";
 }
+
+function atualizarTrend(id, valor) {
+  const elemento = document.getElementById(id);
+
+  if (!elemento) {
+    return;
+  }
+
+  valor = Number(valor) || 0;
+
+  elemento.className = "trend";
+
+  if (valor > 0) {
+    elemento.innerHTML = "▲ +" + valor + "%";
+
+    elemento.classList.add("positivo");
+  } else if (valor < 0) {
+    elemento.innerHTML = "▼ " + valor + "%";
+
+    elemento.classList.add("negativo");
+  } else {
+    elemento.innerHTML = "— 0%";
+
+    elemento.classList.add("neutro");
+  }
+}
+
 async function carregarTopATM() {
   const dados = await api("top10atm");
 

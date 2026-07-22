@@ -22,24 +22,124 @@
 
     <!-- CARDS -->
     <section class="cards">
-      <div class="card">
-        <h2 id="totalEstoque">0</h2>
-        <p>📦 Itens em Estoque</p>
+      <!-- Total de Unidades -->
+
+      <div
+        class="card tooltip"
+        data-tooltip="Quantidade total de peças disponíveis atualmente no estoque."
+      >
+        <div class="card-icon">📦</div>
+
+        <h2 id="totalItens">0</h2>
+
+        <p>Itens em Estoque</p>
+
+        <small id="totalItensTrend" class="trend neutro"> — </small>
       </div>
 
-      <div class="card">
+      <!-- Peça mais trocada -->
+
+      <div
+        class="card tooltip"
+        data-tooltip="Peça com mais trocas no mês."
+      >
+        <div class="card-icon">🧩</div>
+
+        <h2 id="totalPecasMaisTrocadaQtd">0</h2>
+
+        <p id="totalPecasMaisTrocadaNome">Peça mais trocada</p>
+
+        <small id="totalPecasTrend" class="trend neutro"> — </small>
+      </div>
+
+      <!-- Trocas -->
+
+      <div
+        class="card tooltip"
+        data-tooltip="Quantidade de peças substituídas no mês atual. A tendência compara com o mês anterior."
+      >
+        <div class="card-icon">🔁</div>
+
         <h2 id="trocasMes">0</h2>
-        <p>🔁 Trocas do Mês</p>
+
+        <p>Trocas do Mês</p>
+
+        <small id="trocasTrend" class="trend neutro"> — </small>
       </div>
 
-      <div class="card">
+      <!-- Estoque Crítico -->
+
+      <div
+        class="card tooltip"
+        data-tooltip="Quantidade de peças com estoque abaixo do limite mínimo. Regra atual: menos de 5 unidades disponíveis."
+      >
+        <div class="card-icon">⚠️</div>
+
+        <h2 id="estoqueCritico">0</h2>
+
+        <p>Itens Críticos</p>
+
+        <small id="estoqueTrend" class="trend neutro"> — </small>
+      </div>
+
+      <!-- Vandalismos -->
+
+      <div
+        class="card tooltip"
+        data-tooltip="Quantidade de ocorrências classificadas como vandalismo no período atual."
+      >
+        <div class="card-icon">🚨</div>
+
         <h2 id="vandalismos">0</h2>
-        <p>🕴🏻 Vandalismos</p>
+
+        <p>Vandalismos</p>
+
+        <small id="vandalismosTrend" class="trend neutro"> — </small>
       </div>
 
-      <div class="card">
+      <!-- Defeitos -->
+
+      <div
+        class="card tooltip"
+        data-tooltip="Quantidade de trocas realizadas devido a defeitos identificados nas peças ou equipamentos."
+      >
+        <div class="card-icon">🔧</div>
+
         <h2 id="defeitos">0</h2>
-        <p>🔧 Defeitos</p>
+
+        <p>Defeitos</p>
+
+        <small id="defeitosTrend" class="trend neutro"> — </small>
+      </div>
+
+      <!-- Bancada -->
+
+      <div
+        class="card tooltip"
+        data-tooltip="Quantidade de peças ou equipamentos aguardando reparo na bancada técnica."
+      >
+        <div class="card-icon">🧰</div>
+
+        <h2 id="bancada">0</h2>
+
+        <p id="bancadaLocal">Laboratório maior movimentação</p>
+
+        <small id="bancadaTrend" class="trend neutro"> — </small>
+      </div>
+
+      <!-- ATM com Mais Chamados -->
+
+      <div
+        class="card tooltip"
+        data-tooltip="ATM com maior quantidade de chamados registrados no período analisado."
+      >
+        <div class="card-icon">🏧</div>
+
+        <h2 id="atmCriticoQTD">----</h2>
+
+        <p id="atmCritico">Nome do Atm</p>
+
+        <small id="atmTrend" class="trend neutro"> — </small>
       </div>
     </section>
 
