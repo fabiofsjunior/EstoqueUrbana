@@ -832,8 +832,6 @@ function atualizarDashboard() {
   carregarVandalismo().catch(console.error);
   carregarReposicao().catch(console.error);
 
-  // atualiza horário SEMPRE que atualizar o dashboard
-  atualizarHorario();
   document.location.reload;
 }
 
