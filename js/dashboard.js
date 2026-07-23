@@ -1,9 +1,10 @@
 async function carregarIndicadores() {
   const dados = await api("indicadores");
-
   // ==========================
-  // Valores
+  // Valores Indicadores
   // ==========================
+  document.getElementById("ultimaAtualizacao").innerText =
+    "Atualizado às " + formatarDataAtualizacao(dados.Ultima_Atualizacao);
 
   document.getElementById("totalItens").innerText =
     dados.Total_Itens_Estoque ?? 0;
@@ -626,6 +627,20 @@ function converterDataBR(dataHora) {
   return new Date(ano, mes - 1, dia, h, m);
 }
 
+function formatarDataAtualizacao(dataIso) {
+  if (!dataIso) return "-";
+
+  const data = new Date(dataIso);
+
+  return data.toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const btnBancada = document.getElementById("btnPdfBancada");
 
@@ -640,15 +655,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-function atualizarHorario() {
-  const agora = new Date();
+// function atualizarHorario() {
+//   const agora = new Date();
 
-  const el = document.getElementById("ultimaAtualizacao");
+//   const el = document.getElementById("ultimaAtualizacao");
 
-  if (!el) return;
+//   if (!el) return;
 
-  el.innerText = "Atualizado às " + agora.toLocaleTimeString("pt-BR");
-}
+//   el.innerText = "Atualizado às " + agora.toLocaleTimeString("pt-BR");
+// }
 
 let pecasReposicao = [];
 let pecasReposicaoOriginal = [];
