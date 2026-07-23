@@ -4,7 +4,7 @@ async function carregarIndicadores() {
   // Valores Indicadores
   // ==========================
   document.getElementById("ultimaAtualizacao").innerText =
-    "Atualizado às " + formatarDataAtualizacao(dados.Ultima_Atualizacao);
+    "Atualizado às " + formatarDataAtualizacao(dados.Ultima_Atualizacao) + "h";
 
   document.getElementById("totalItens").innerText =
     dados.Total_Itens_Estoque ?? 0;
@@ -654,16 +654,6 @@ document.addEventListener("DOMContentLoaded", () => {
     btnVandalismo.addEventListener("click", imprimirVandalismo);
   }
 });
-
-// function atualizarHorario() {
-//   const agora = new Date();
-
-//   const el = document.getElementById("ultimaAtualizacao");
-
-//   if (!el) return;
-
-//   el.innerText = "Atualizado às " + agora.toLocaleTimeString("pt-BR");
-// }
 
 let pecasReposicao = [];
 let pecasReposicaoOriginal = [];

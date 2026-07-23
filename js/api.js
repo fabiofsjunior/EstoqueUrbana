@@ -4,14 +4,13 @@ const API_URL =
 async function api(action) {
   try {
     const res = await fetch(`${API_URL}?action=${action}`);
-    
+
     if (!res.ok) {
       throw new Error("Erro HTTP: " + res.status);
     }
 
     const data = await res.json();
     return data;
-
   } catch (err) {
     console.error("Erro API:", err);
     throw err;
