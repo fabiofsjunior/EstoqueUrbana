@@ -24,7 +24,7 @@ async function carregarIndicadores() {
 
   document.getElementById("defeitos").innerText = dados.Defeitos_Mes ?? 0;
 
-  document.getElementById("bancada").innerText = dados.Bancada ?? 0;
+  document.getElementById("bancada").innerText = dados.Laboratorio_Maior_Volume_QTD ?? 0;
 
   document.getElementById("bancadaLocal").innerText =
     dados.Laboratorio_Maior_Volume ?? 0;
