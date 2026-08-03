@@ -870,8 +870,6 @@ async function carregarRetornos() {
   try {
     const resposta = await api("retornos");
 
-    console.log("Retornos recebidos:", resposta);
-
     //=====================================================
     // PROTEÇÃO CONTRA ERRO DA API
     //=====================================================
@@ -1319,7 +1317,7 @@ async function gerarPdfRetorno() {
     return;
   }
 
-  // Busca novamente os dados atuais
+  // Busca dados atuais
 
   const dados = await api("retornos");
 
@@ -1329,7 +1327,9 @@ async function gerarPdfRetorno() {
     return;
   }
 
-  const linhasSelecionadas = selecionados.map((chk) => chk.dataset.linha);
+  const linhasSelecionadas = selecionados.map((chk) =>
+    String(chk.dataset.linha),
+  );
 
   const itens = dados.filter((item) =>
     linhasSelecionadas.includes(String(item.linha)),
@@ -1339,9 +1339,11 @@ async function gerarPdfRetorno() {
   // VALIDA CHAMADO FILHO
   //=====================================================
 
-  const semChamado = itens.filter(
-    (item) => !item.chamadoFilho || item.chamadoFilho.trim() === "",
-  );
+  const semChamado = itens.filter((item) => {
+    const chamadoFilho = String(item.chamadoFilho || "").trim();
+
+    return chamadoFilho === "";
+  });
 
   if (semChamado.length > 0) {
     alert(
@@ -1359,7 +1361,9 @@ async function gerarPdfRetorno() {
   const agrupado = {};
 
   itens.forEach((item) => {
-    const peca = item.peca || "SEM IDENTIFICAÇÃO";
+    const peca = String(item.peca || "SEM IDENTIFICAÇÃO").trim();
+
+    const chamadoFilho = String(item.chamadoFilho || "").trim();
 
     if (!agrupado[peca]) {
       agrupado[peca] = {
@@ -1371,7 +1375,9 @@ async function gerarPdfRetorno() {
 
     agrupado[peca].quantidade++;
 
-    agrupado[peca].chamados.push(item.chamadoFilho);
+    if (chamadoFilho && !agrupado[peca].chamados.includes(chamadoFilho)) {
+      agrupado[peca].chamados.push(chamadoFilho);
+    }
   });
 
   //=====================================================
@@ -1389,26 +1395,26 @@ async function gerarPdfRetorno() {
 
       linhasTabela += `
 
-      <tr>
+        <tr>
 
-        <td>
-          ${item.quantidade}
-        </td>
-
-
-        <td>
-          ${peca}
-        </td>
+          <td>
+            ${item.quantidade}
+          </td>
 
 
-        <td>
-          ${item.chamados.join("<br>")}
-        </td>
+          <td>
+            ${peca}
+          </td>
 
 
-      </tr>
+          <td>
+            ${item.chamados.join("; ")}
+          </td>
 
-    `;
+
+        </tr>
+
+      `;
     });
 
   //=====================================================
@@ -1432,82 +1438,72 @@ async function gerarPdfRetorno() {
 
 <head>
 
-
 <title>
 Retorno de Componentes
 </title>
 
 
-
 <style>
 
+body {
 
-body{
+  font-family: Arial;
 
-font-family:Arial;
-
-padding:30px;
-
-}
-
-
-
-h2{
-
-text-align:center;
+  padding: 30px;
 
 }
 
 
+h2 {
 
-.info{
-
-margin-bottom:20px;
-
-font-weight:bold;
+  text-align:center;
 
 }
 
 
+.info {
 
-table{
+  margin-bottom:20px;
 
-width:100%;
-
-border-collapse:collapse;
-
-}
-
-
-
-th{
-
-background:#005bbb;
-
-color:white;
-
-padding:10px;
+  font-weight:bold;
 
 }
 
 
+table {
 
-td{
+  width:100%;
 
-padding:8px;
-
-border:1px solid #ccc;
-
-text-align:center;
-
-vertical-align:top;
+  border-collapse:collapse;
 
 }
 
+
+th {
+
+  background:#005bbb;
+
+  color:white;
+
+  padding:10px;
+
+}
+
+
+td {
+
+  padding:8px;
+
+  border:1px solid #ccc;
+
+  text-align:center;
+
+  vertical-align:top;
+
+}
 
 
 </style>
-
 
 </head>
 
@@ -1515,11 +1511,8 @@ vertical-align:top;
 <body>
 
 
-
 <h2>
-
 RETORNO DE COMPONENTES PARA MANUTENÇÃO
-
 </h2>
 
 
@@ -1546,7 +1539,6 @@ ${new Date().toLocaleDateString("pt-BR")}
 
 <tr>
 
-
 <th>
 QUANTIDADE
 </th>
@@ -1567,25 +1559,19 @@ CHAMADOS
 </thead>
 
 
-
 <tbody>
-
 
 ${linhasTabela}
 
-
 </tbody>
-
 
 
 </table>
 
 
-
 </body>
 
 </html>
-
 
   `);
 
@@ -1593,6 +1579,7 @@ ${linhasTabela}
 
   janela.print();
 }
+
 let listaRetornosAtual = [];
 
 function atualizarDashboard() {
