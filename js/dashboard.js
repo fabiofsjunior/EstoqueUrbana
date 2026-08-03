@@ -24,7 +24,8 @@ async function carregarIndicadores() {
 
   document.getElementById("defeitos").innerText = dados.Defeitos_Mes ?? 0;
 
-  document.getElementById("bancada").innerText = dados.Laboratorio_Maior_Volume_QTD ?? 0;
+  document.getElementById("bancada").innerText =
+    dados.Laboratorio_Maior_Volume_QTD ?? 0;
 
   document.getElementById("bancadaLocal").innerText =
     dados.Laboratorio_Maior_Volume ?? 0;
@@ -819,6 +820,780 @@ btnSelecionarTodos.addEventListener("click", () => {
     ? "☐ Desmarcar todos"
     : "☑ Selecionar todos";
 });
+//=====================================================
+// RETORNO DE PEÇAS PARA MANUTENÇÃO
+//=====================================================
+
+document
+  .getElementById("filtroRetorno")
+  ?.addEventListener("keyup", carregarRetornos);
+
+document
+  .getElementById("filtroStatus")
+  ?.addEventListener("change", carregarRetornos);
+
+document
+  .getElementById("filtroLaboratorio")
+  ?.addEventListener("change", carregarRetornos);
+
+//=====================================================
+// CARREGAR RETORNOS
+//=====================================================
+
+async function carregarRetornos() {
+  const tbody = document.getElementById("retorno-body");
+
+  if (!tbody) {
+    console.error("Elemento retorno-body não encontrado");
+
+    return;
+  }
+
+  //=====================================================
+  // LOADING
+  //=====================================================
+
+  tbody.innerHTML = `
+
+    <tr>
+
+      <td colspan="8">
+
+        🔄 Atualizando retornos...
+
+      </td>
+
+    </tr>
+
+  `;
+
+  try {
+    const resposta = await api("retornos");
+
+    console.log("Retornos recebidos:", resposta);
+
+    //=====================================================
+    // PROTEÇÃO CONTRA ERRO DA API
+    //=====================================================
+
+    if (!Array.isArray(resposta)) {
+      console.error("API retornou formato inválido:", resposta);
+
+      tbody.innerHTML = `
+
+        <tr>
+
+          <td colspan="8">
+
+            ❌ Erro ao carregar retornos
+
+          </td>
+
+        </tr>
+
+      `;
+
+      return;
+    }
+
+    const dados = resposta.map((item) => ({ ...item }));
+
+    tbody.innerHTML = "";
+
+    //=====================================================
+    // NORMALIZA STATUS PELO CHAMADO FILHO
+    //=====================================================
+
+    dados.forEach((item) => {
+      const chamadoFilho = String(item.chamadoFilho || "").trim();
+
+      // Sem chamado filho = sempre PENDENTE
+
+      if (!chamadoFilho) {
+        item.status = "PENDENTE";
+      }
+
+      // Com chamado filho e não finalizado
+      // = SEPARADO PARA ENVIO
+      else if (item.status !== "FINALIZADO") {
+        item.status = "SEPARADO PARA ENVIO";
+      }
+    });
+
+    const filtroTexto =
+      document.getElementById("filtroRetorno")?.value.trim().toUpperCase() ||
+      "";
+
+    const filtroStatus = document.getElementById("filtroStatus")?.value || "";
+
+    const filtroLab = document.getElementById("filtroLaboratorio")?.value || "";
+
+    //=====================================================
+    // PRIORIDADE DOS STATUS
+    //=====================================================
+
+    const prioridade = {
+      PENDENTE: 1,
+
+      "SEPARADO PARA ENVIO": 2,
+
+      FINALIZADO: 3,
+    };
+
+    dados.sort((a, b) => {
+      return (prioridade[a.status] || 99) - (prioridade[b.status] || 99);
+    });
+
+    let totalExibido = 0;
+
+    dados.forEach((item) => {
+      //----------------------------------------
+      // FILTRO TEXTO
+      //----------------------------------------
+
+      const texto = (
+        String(item.chamadoPai || "") +
+        " " +
+        String(item.chamadoFilho || "") +
+        " " +
+        String(item.peca || "") +
+        " " +
+        String(item.atm || "")
+      ).toUpperCase();
+
+      if (filtroTexto && !texto.includes(filtroTexto)) {
+        return;
+      }
+
+      //----------------------------------------
+      // FILTRO STATUS
+      //----------------------------------------
+
+      if (filtroStatus && item.status !== filtroStatus) {
+        return;
+      }
+
+      //----------------------------------------
+      // FILTRO LABORATÓRIO
+      //----------------------------------------
+
+      if (filtroLab && item.laboratorio !== filtroLab) {
+        return;
+      }
+
+      //----------------------------------------
+      // STATUS CSS
+      //----------------------------------------
+
+      const classeStatus = String(item.status || "")
+        .replace(/\s+/g, "-")
+
+        .toLowerCase();
+
+      //----------------------------------------
+      // MONTA LINHA
+      //----------------------------------------
+
+      tbody.innerHTML += `
+
+
+<tr>
+
+
+<td>
+
+<input
+
+type="checkbox"
+
+class="chkRetorno"
+
+data-linha="${item.linha}">
+
+</td>
+
+
+
+<td>
+
+${item.chamadoPai || "-"}
+
+</td>
+
+
+
+<td>
+
+${item.chamadoFilho || "-"}
+
+</td>
+
+
+
+<td>
+
+${item.peca || "-"}
+
+</td>
+
+
+
+<td>
+
+${item.laboratorio || "-"}
+
+</td>
+
+
+
+<td>
+
+${item.atm || "-"}
+
+</td>
+
+
+
+
+<td>
+
+<span class="status ${classeStatus}">
+
+${item.status || "PENDENTE"}
+
+</span>
+
+</td>
+
+
+
+
+<td>
+
+
+<button
+
+class="btn-mini"
+
+title="Informar chamado filho"
+
+onclick="informarChamadoFilho(${item.linha})">
+
+✏️
+
+</button>
+
+
+
+
+<button
+
+class="btn-mini"
+
+title="Duplicar registro"
+
+onclick="duplicarRetorno(${item.linha})">
+
+📑
+
+</button>
+
+
+
+
+
+<button
+
+class="btn-mini"
+
+title="Finalizar retorno"
+
+onclick="finalizarRetorno(${item.linha})">
+
+✅
+
+</button>
+
+
+</td>
+
+
+
+</tr>
+
+
+`;
+
+      totalExibido++;
+    });
+
+    //=====================================================
+    // NENHUM RESULTADO
+    //=====================================================
+
+    if (totalExibido === 0) {
+      tbody.innerHTML = `
+
+      <tr>
+
+        <td colspan="8">
+
+          Nenhum retorno encontrado.
+
+        </td>
+
+      </tr>
+
+      `;
+    }
+  } catch (err) {
+    console.error("Erro ao carregar retornos:", err);
+
+    tbody.innerHTML = `
+
+      <tr>
+
+        <td colspan="8">
+
+          ❌ Erro de comunicação com servidor.
+
+        </td>
+
+      </tr>
+
+    `;
+  }
+}
+//=====================================================
+// INFORMAR CHAMADO FILHO
+//=====================================================
+
+async function informarChamadoFilho(linha) {
+  const chamado = prompt("Informe o chamado filho:");
+
+  if (!chamado) {
+    return;
+  }
+
+  try {
+    const resposta = await api("salvarFilho", {
+      linha: linha,
+      chamado: chamado,
+    });
+
+    console.log("Retorno salvarFilho:", resposta);
+
+    if (resposta.erro) {
+      alert("Erro ao salvar:\n" + resposta.erro);
+
+      return;
+    }
+
+    alert("✅ Chamado filho informado com sucesso!");
+
+    await carregarRetornos();
+  } catch (err) {
+    console.error(err);
+
+    alert("❌ Erro ao informar chamado filho.");
+  }
+}
+
+//=====================================================
+// DUPLICAR RETORNO
+//=====================================================
+
+async function duplicarRetorno(linha) {
+  if (!confirm("Duplicar este componente?")) {
+    return;
+  }
+
+  try {
+    const resposta = await api("duplicarRetorno", {
+      linha: linha,
+    });
+
+    console.log("Retorno duplicação:", resposta);
+
+    if (resposta.erro) {
+      alert("Erro:\n" + resposta.erro);
+
+      return;
+    }
+
+    alert("📑 Registro duplicado!");
+
+    await carregarRetornos();
+  } catch (err) {
+    console.error(err);
+
+    alert("Erro ao duplicar retorno.");
+  }
+}
+//=====================================================
+// FINALIZAR RETORNO
+//=====================================================
+
+async function finalizarRetorno(linha) {
+  if (!confirm("Finalizar retorno?")) {
+    return;
+  }
+
+  try {
+    const resposta = await api("finalizarRetorno", {
+      linha: linha,
+    });
+
+    console.log("Retorno finalização:", resposta);
+
+    if (resposta.erro) {
+      alert("Erro:\n" + resposta.erro);
+
+      return;
+    }
+
+    alert("✅ Retorno finalizado!");
+
+    await carregarRetornos();
+  } catch (err) {
+    console.error(err);
+
+    alert("Erro ao finalizar retorno.");
+  }
+}
+
+//=====================================================
+// SELECIONAR TODOS OS RETORNOS
+//=====================================================
+
+document
+  .getElementById("btnSelecionarTodosRetorno")
+  ?.addEventListener("click", function () {
+    const checkboxes = document.querySelectorAll(".chkRetorno");
+
+    if (checkboxes.length === 0) {
+      alert("Nenhum retorno disponível para seleção.");
+
+      return;
+    }
+
+    // Verifica se todos estão selecionados
+
+    const todosSelecionados = Array.from(checkboxes).every(
+      (chk) => chk.checked,
+    );
+
+    // Alterna seleção
+
+    checkboxes.forEach((chk) => {
+      chk.checked = !todosSelecionados;
+    });
+
+    // Atualiza texto do botão
+
+    this.innerHTML = todosSelecionados
+      ? "☑ Selecionar Todos"
+      : "☐ Desmarcar Todos";
+  });
+
+//=====================================================
+// BOTÃO PDF RETORNO
+//=====================================================
+
+document
+  .getElementById("btnPdfRetorno")
+  ?.addEventListener("click", gerarPdfRetorno);
+
+//=====================================================
+// GERAR PDF RETORNO COMPONENTES
+//=====================================================
+
+async function gerarPdfRetorno() {
+  const selecionados = Array.from(
+    document.querySelectorAll(".chkRetorno:checked"),
+  );
+
+  if (selecionados.length === 0) {
+    alert("Selecione ao menos um componente para gerar o retorno.");
+
+    return;
+  }
+
+  // Busca novamente os dados atuais
+
+  const dados = await api("retornos");
+
+  if (!Array.isArray(dados)) {
+    alert("Erro ao carregar dados dos retornos.");
+
+    return;
+  }
+
+  const linhasSelecionadas = selecionados.map((chk) => chk.dataset.linha);
+
+  const itens = dados.filter((item) =>
+    linhasSelecionadas.includes(String(item.linha)),
+  );
+
+  //=====================================================
+  // VALIDA CHAMADO FILHO
+  //=====================================================
+
+  const semChamado = itens.filter(
+    (item) => !item.chamadoFilho || item.chamadoFilho.trim() === "",
+  );
+
+  if (semChamado.length > 0) {
+    alert(
+      "⚠️ Existem componentes selecionados sem CHAMADO_FILHO.\n\n" +
+        "Informe o chamado filho antes de gerar o retorno.",
+    );
+
+    return;
+  }
+
+  //=====================================================
+  // AGRUPAMENTO POR PEÇA
+  //=====================================================
+
+  const agrupado = {};
+
+  itens.forEach((item) => {
+    const peca = item.peca || "SEM IDENTIFICAÇÃO";
+
+    if (!agrupado[peca]) {
+      agrupado[peca] = {
+        quantidade: 0,
+
+        chamados: [],
+      };
+    }
+
+    agrupado[peca].quantidade++;
+
+    agrupado[peca].chamados.push(item.chamadoFilho);
+  });
+
+  //=====================================================
+  // MONTA TABELA
+  //=====================================================
+
+  let linhasTabela = "";
+
+  Object.keys(agrupado)
+
+    .sort()
+
+    .forEach((peca) => {
+      const item = agrupado[peca];
+
+      linhasTabela += `
+
+      <tr>
+
+        <td>
+          ${item.quantidade}
+        </td>
+
+
+        <td>
+          ${peca}
+        </td>
+
+
+        <td>
+          ${item.chamados.join("<br>")}
+        </td>
+
+
+      </tr>
+
+    `;
+    });
+
+  //=====================================================
+  // FILTRO LABORATÓRIO
+  //=====================================================
+
+  const laboratorio =
+    document.getElementById("filtroLaboratorio")?.value || "TODOS";
+
+  //=====================================================
+  // JANELA DE IMPRESSÃO
+  //=====================================================
+
+  const janela = window.open("", "_blank");
+
+  janela.document.write(`
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+
+<title>
+Retorno de Componentes
+</title>
+
+
+
+<style>
+
+
+body{
+
+font-family:Arial;
+
+padding:30px;
+
+}
+
+
+
+h2{
+
+text-align:center;
+
+}
+
+
+
+.info{
+
+margin-bottom:20px;
+
+font-weight:bold;
+
+}
+
+
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+}
+
+
+
+th{
+
+background:#005bbb;
+
+color:white;
+
+padding:10px;
+
+}
+
+
+
+td{
+
+padding:8px;
+
+border:1px solid #ccc;
+
+text-align:center;
+
+vertical-align:top;
+
+}
+
+
+
+</style>
+
+
+</head>
+
+
+<body>
+
+
+
+<h2>
+
+RETORNO DE COMPONENTES PARA MANUTENÇÃO
+
+</h2>
+
+
+
+<div class="info">
+
+Laboratório:
+${laboratorio}
+
+<br>
+
+Data:
+${new Date().toLocaleDateString("pt-BR")}
+
+</div>
+
+
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+
+<th>
+QUANTIDADE
+</th>
+
+
+<th>
+NOME DA PEÇA
+</th>
+
+
+<th>
+CHAMADOS
+</th>
+
+
+</tr>
+
+</thead>
+
+
+
+<tbody>
+
+
+${linhasTabela}
+
+
+</tbody>
+
+
+
+</table>
+
+
+
+</body>
+
+</html>
+
+
+  `);
+
+  janela.document.close();
+
+  janela.print();
+}
+let listaRetornosAtual = [];
 
 function atualizarDashboard() {
   carregarIndicadores().catch(console.error);
@@ -842,4 +1617,6 @@ window.addEventListener("DOMContentLoaded", () => {
   setInterval(() => {
     atualizarDashboard();
   }, 600000); // 10 minutos
+
+  carregarRetornos();
 });

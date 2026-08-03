@@ -333,7 +333,7 @@
 
     <!-- 📦 Solicitação de Reposição -->
     <details class="accordion">
-      <summary>📦 Situação do Estoque/Reposição</summary>
+      <summary>📦 Relatório da Situação do Estoque/Necessidade de Reposição</summary>
 
       <div class="accordion-content">
         <section class="box">
@@ -370,6 +370,75 @@
               </thead>
 
               <tbody id="reposicao-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </details>
+
+    <!-- 🔄 Retorno de Componentes -->
+    <details class="accordion">
+      <summary>🔄 Relatório para Retorno de Componentes para Manutenção</summary>
+
+      <div class="accordion-content">
+        <section class="box">
+          <div class="acoes-retorno">
+            <input
+              id="filtroRetorno"
+              type="text"
+              placeholder="🔎 Buscar peça, ATM ou chamado..."
+            />
+
+            <select id="filtroLaboratorio">
+              <option value="">🏢 Todos os Laboratórios</option>
+
+              <option value="FILIAL">FILIAL</option>
+
+              <option value="MATRIZ">MATRIZ</option>
+            </select>
+
+            <select id="filtroStatus">
+              <option value="">Todos os Status</option>
+
+              <option value="PENDENTE">🟥 Pendente</option>
+
+              <option value="SEPARADO PARA ENVIO">
+                🟨 Separado para Envio
+              </option>
+
+              <option value="FINALIZADO">🟩 Finalizado</option>
+            </select>
+
+            <button id="btnSelecionarTodosRetorno" class="btn-pdf">
+              ☑ Selecionar Todos
+            </button>
+
+            <button id="btnPdfRetorno" class="btn-pdf">📄 Imprimir PDF</button>
+          </div>
+
+          <div class="scroll-movimentacoes">
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+
+                  <th>Chamado Pai</th>
+
+                  <th>Chamado Filho</th>
+
+                  <th>Peça</th>
+
+                  <th>Laboratório</th>
+
+                  <th>ATM</th>
+
+                  <th>Status</th>
+
+                  <th>Ações</th>
+                </tr>
+              </thead>
+
+              <tbody id="retorno-body"></tbody>
             </table>
           </div>
         </section>
