@@ -1581,29 +1581,60 @@ ${linhasTabela}
 }
 
 let listaRetornosAtual = [];
+let atualizandoDashboard = false;
 
-function atualizarDashboard() {
-  carregarIndicadores().catch(console.error);
-  carregarTopATM().catch(console.error);
-  carregarTopPecas().catch(console.error);
-  carregarMotivos().catch(console.error);
-  carregarConsumoMensal().catch(console.error);
-  carregarUltimasMovimentacoes().catch(console.error);
-  carregarReparoPorLocal().catch(console.error);
-  carregarBancada().catch(console.error);
-  carregarVandalismo().catch(console.error);
-  carregarReposicao().catch(console.error);
+async function atualizarDashboard() {
+  if (atualizandoDashboard) {
+    return;
+  }
 
-  document.location.reload;
+  atualizandoDashboard = true;
+
+  try {
+    await executar(carregarIndicadores);
+
+    await executar(carregarTopATM);
+
+    await executar(carregarTopPecas);
+
+    await executar(carregarMotivos);
+
+    await executar(carregarConsumoMensal);
+
+    await executar(carregarUltimasMovimentacoes);
+
+    await executar(carregarReparoPorLocal);
+
+    await executar(carregarBancada);
+
+    await executar(carregarVandalismo);
+
+    await executar(carregarReposicao);
+
+    await executar(carregarRetornos);
+  } finally {
+    atualizandoDashboard = false;
+  }
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  atualizarDashboard();
+function esperar(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function executar(funcao) {
+  try {
+    await funcao();
+  } catch (e) {
+    console.error(e);
+  }
+
+  await esperar(150);
+}
+
+window.addEventListener("DOMContentLoaded", async () => {
+  await atualizarDashboard();
+
   document.getElementById("btnPdfReposicao").onclick = imprimirReposicao;
 
-  setInterval(() => {
-    atualizarDashboard();
-  }, 600000); // 10 minutos
-
-  carregarRetornos();
+  setInterval(atualizarDashboard, 600000);
 });

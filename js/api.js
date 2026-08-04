@@ -17,26 +17,30 @@ const API_URL =
 //   }
 // }
 
-async function api(action, params = {}) {
-  try {
-    let url = `${API_URL}?action=${action}`;
+async function api(action, tentativas = 3) {
 
-    Object.keys(params).forEach((key) => {
-      url += `&${key}=${encodeURIComponent(params[key])}`;
-    });
+  for (let i = 0; i < tentativas; i++) {
 
-    const res = await fetch(url);
+    try {
 
-    if (!res.ok) {
-      throw new Error("Erro HTTP: " + res.status);
+      const res = await fetch(`${API_URL}?action=${action}`, {
+        cache: "no-store"
+      });
+
+      if (res.ok) {
+
+        return await res.json();
+
+      }
+
+    } catch (e) {
+      console.warn(`Tentativa ${i + 1} falhou para ${action}`);
     }
 
-    const data = await res.json();
+    await esperar(500);
 
-    return data;
-  } catch (err) {
-    console.error("Erro API:", err);
-
-    throw err;
   }
+
+  throw new Error(`Erro ao carregar ${action}`);
+
 }
