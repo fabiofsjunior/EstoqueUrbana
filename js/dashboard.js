@@ -840,12 +840,16 @@ document
 // CARREGAR RETORNOS
 //=====================================================
 
+let retornosCache = [];
+//=====================================================
+// CARREGAR RETORNOS
+//=====================================================
+
 async function carregarRetornos() {
   const tbody = document.getElementById("retorno-body");
 
   if (!tbody) {
     console.error("Elemento retorno-body não encontrado");
-
     return;
   }
 
@@ -854,41 +858,29 @@ async function carregarRetornos() {
   //=====================================================
 
   tbody.innerHTML = `
-
     <tr>
-
       <td colspan="8">
-
         🔄 Atualizando retornos...
-
       </td>
-
     </tr>
-
   `;
 
   try {
     const resposta = await api("retornos");
 
     //=====================================================
-    // PROTEÇÃO CONTRA ERRO DA API
+    // VALIDAÇÃO
     //=====================================================
 
     if (!Array.isArray(resposta)) {
       console.error("API retornou formato inválido:", resposta);
 
       tbody.innerHTML = `
-
         <tr>
-
           <td colspan="8">
-
-            ❌ Erro ao carregar retornos
-
+            ❌ Erro ao carregar retornos.
           </td>
-
         </tr>
-
       `;
 
       return;
@@ -899,24 +891,22 @@ async function carregarRetornos() {
     tbody.innerHTML = "";
 
     //=====================================================
-    // NORMALIZA STATUS PELO CHAMADO FILHO
+    // NORMALIZA STATUS
     //=====================================================
 
     dados.forEach((item) => {
       const chamadoFilho = String(item.chamadoFilho || "").trim();
 
-      // Sem chamado filho = sempre PENDENTE
-
       if (!chamadoFilho) {
         item.status = "PENDENTE";
-      }
-
-      // Com chamado filho e não finalizado
-      // = SEPARADO PARA ENVIO
-      else if (item.status !== "FINALIZADO") {
+      } else if (item.status !== "FINALIZADO") {
         item.status = "SEPARADO PARA ENVIO";
       }
     });
+
+    //=====================================================
+    // FILTROS
+    //=====================================================
 
     const filtroTexto =
       document.getElementById("filtroRetorno")?.value.trim().toUpperCase() ||
@@ -927,7 +917,7 @@ async function carregarRetornos() {
     const filtroLab = document.getElementById("filtroLaboratorio")?.value || "";
 
     //=====================================================
-    // PRIORIDADE DOS STATUS
+    // ORDENAÇÃO
     //=====================================================
 
     const prioridade = {
@@ -938,17 +928,17 @@ async function carregarRetornos() {
       FINALIZADO: 3,
     };
 
-    dados.sort((a, b) => {
-      return (prioridade[a.status] || 99) - (prioridade[b.status] || 99);
-    });
+    dados.sort(
+      (a, b) => (prioridade[a.status] || 99) - (prioridade[b.status] || 99),
+    );
 
     let totalExibido = 0;
 
-    dados.forEach((item) => {
-      //----------------------------------------
-      // FILTRO TEXTO
-      //----------------------------------------
+    //=====================================================
+    // RENDERIZA
+    //=====================================================
 
+    dados.forEach((item) => {
       const texto = (
         String(item.chamadoPai || "") +
         " " +
@@ -959,215 +949,134 @@ async function carregarRetornos() {
         String(item.atm || "")
       ).toUpperCase();
 
-      if (filtroTexto && !texto.includes(filtroTexto)) {
-        return;
-      }
+      if (filtroTexto && !texto.includes(filtroTexto)) return;
 
-      //----------------------------------------
-      // FILTRO STATUS
-      //----------------------------------------
+      if (filtroStatus && item.status !== filtroStatus) return;
 
-      if (filtroStatus && item.status !== filtroStatus) {
-        return;
-      }
-
-      //----------------------------------------
-      // FILTRO LABORATÓRIO
-      //----------------------------------------
-
-      if (filtroLab && item.laboratorio !== filtroLab) {
-        return;
-      }
-
-      //----------------------------------------
-      // STATUS CSS
-      //----------------------------------------
+      if (filtroLab && item.laboratorio !== filtroLab) return;
 
       const classeStatus = String(item.status || "")
         .replace(/\s+/g, "-")
-
         .toLowerCase();
 
-      //----------------------------------------
-      // MONTA LINHA
-      //----------------------------------------
+      //=====================================================
+      // BOTÕES
+      //=====================================================
+
+      let botoes = "";
+
+      const chamadoFilho = String(item.chamadoFilho || "").trim();
+
+      if (!chamadoFilho) {
+        botoes = `
+          <button
+            class="btn-mini"
+            title="Informar chamado Laboratório"
+            onclick="informarChamadoFilho(${item.linha})">
+            ✏️
+          </button>
+        `;
+      } else if (item.status === "SEPARADO PARA ENVIO") {
+        botoes = `
+          <button
+            class="btn-mini"
+            title="Finalizar retorno"
+            onclick="finalizarRetorno(${item.linha})">
+            ✅
+          </button>
+        `;
+      } else {
+        botoes = `
+          <span
+            title="Retorno finalizado"
+            style="
+              color:#16a34a;
+              font-size:18px;
+              font-weight:bold;">
+            ✔
+          </span>
+        `;
+      }
 
       tbody.innerHTML += `
 
+        <tr>
 
-<tr>
+          <td>
 
+            <input
+              type="checkbox"
+              class="chkRetorno"
+              data-linha="${item.linha}"
+              ">
 
-<td>
+          </td>
 
-<input
+          <td>${item.chamadoPai || "-"}</td>
 
-type="checkbox"
+          <td>${item.chamadoFilho || "-"}</td>
 
-class="chkRetorno"
+          <td>${item.peca || "-"}</td>
 
-data-linha="${item.linha}">
+          <td>${item.laboratorio || "-"}</td>
 
-</td>
+          <td>${item.atm || "-"}</td>
 
+          <td>
 
+            <span class="status ${classeStatus}">
+              ${item.status}
+            </span>
 
-<td>
+          </td>
 
-${item.chamadoPai || "-"}
+          <td>
 
-</td>
+            ${botoes}
 
+          </td>
 
+        </tr>
 
-<td>
-
-${item.chamadoFilho || "-"}
-
-</td>
-
-
-
-<td>
-
-${item.peca || "-"}
-
-</td>
-
-
-
-<td>
-
-${item.laboratorio || "-"}
-
-</td>
-
-
-
-<td>
-
-${item.atm || "-"}
-
-</td>
-
-
-
-
-<td>
-
-<span class="status ${classeStatus}">
-
-${item.status || "PENDENTE"}
-
-</span>
-
-</td>
-
-
-
-
-<td>
-
-
-<button
-
-class="btn-mini"
-
-title="Informar chamado filho"
-
-onclick="informarChamadoFilho(${item.linha})">
-
-✏️
-
-</button>
-
-
-
-
-<button
-
-class="btn-mini"
-
-title="Duplicar registro"
-
-onclick="duplicarRetorno(${item.linha})">
-
-📑
-
-</button>
-
-
-
-
-
-<button
-
-class="btn-mini"
-
-title="Finalizar retorno"
-
-onclick="finalizarRetorno(${item.linha})">
-
-✅
-
-</button>
-
-
-</td>
-
-
-
-</tr>
-
-
-`;
+      `;
 
       totalExibido++;
     });
 
     //=====================================================
-    // NENHUM RESULTADO
+    // SEM RESULTADOS
     //=====================================================
 
     if (totalExibido === 0) {
       tbody.innerHTML = `
-
-      <tr>
-
-        <td colspan="8">
-
-          Nenhum retorno encontrado.
-
-        </td>
-
-      </tr>
-
+        <tr>
+          <td colspan="8">
+            Nenhum retorno encontrado.
+          </td>
+        </tr>
       `;
     }
+    
   } catch (err) {
-    console.error("Erro ao carregar retornos:", err);
+    console.error(err);
 
     tbody.innerHTML = `
-
       <tr>
-
         <td colspan="8">
-
-          ❌ Erro de comunicação com servidor.
-
+          ❌ Erro de comunicação com o servidor.
         </td>
-
       </tr>
-
     `;
   }
 }
+
+
 //=====================================================
 // INFORMAR CHAMADO FILHO
 //=====================================================
 
 async function informarChamadoFilho(linha) {
-  const chamado = prompt("Informe o chamado filho:");
+  const chamado = prompt("Informe o chamado Laboratório:");
 
   if (!chamado) {
     return;
@@ -1187,47 +1096,16 @@ async function informarChamadoFilho(linha) {
       return;
     }
 
-    alert("✅ Chamado filho informado com sucesso!");
+    alert("✅ Chamado Laboratório informado com sucesso!");
 
     await carregarRetornos();
   } catch (err) {
     console.error(err);
 
-    alert("❌ Erro ao informar chamado filho.");
+    alert("❌ Erro ao informar chamado Laboratório.");
   }
 }
 
-//=====================================================
-// DUPLICAR RETORNO
-//=====================================================
-
-async function duplicarRetorno(linha) {
-  if (!confirm("Duplicar este componente?")) {
-    return;
-  }
-
-  try {
-    const resposta = await api("duplicarRetorno", {
-      linha: linha,
-    });
-
-    console.log("Retorno duplicação:", resposta);
-
-    if (resposta.erro) {
-      alert("Erro:\n" + resposta.erro);
-
-      return;
-    }
-
-    alert("📑 Registro duplicado!");
-
-    await carregarRetornos();
-  } catch (err) {
-    console.error(err);
-
-    alert("Erro ao duplicar retorno.");
-  }
-}
 //=====================================================
 // FINALIZAR RETORNO
 //=====================================================
@@ -1302,6 +1180,7 @@ document
   .getElementById("btnPdfRetorno")
   ?.addEventListener("click", gerarPdfRetorno);
 
+
 //=====================================================
 // GERAR PDF RETORNO COMPONENTES
 //=====================================================
@@ -1347,8 +1226,8 @@ async function gerarPdfRetorno() {
 
   if (semChamado.length > 0) {
     alert(
-      "⚠️ Existem componentes selecionados sem CHAMADO_FILHO.\n\n" +
-        "Informe o chamado filho antes de gerar o retorno.",
+      "⚠️ Existem componentes selecionados sem CHAMADO DE LABORATÓRIO.\n\n" +
+        "Informe o chamado laboratório antes de gerar o retorno.",
     );
 
     return;
@@ -1579,6 +1458,8 @@ ${linhasTabela}
 
   janela.print();
 }
+
+
 
 let listaRetornosAtual = [];
 let atualizandoDashboard = false;

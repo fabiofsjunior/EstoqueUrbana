@@ -17,30 +17,67 @@ const API_URL =
 //   }
 // }
 
-async function api(action, tentativas = 3) {
+// async function api(action, tentativas = 3) {
+
+//   for (let i = 0; i < tentativas; i++) {
+
+//     try {
+
+//       const res = await fetch(`${API_URL}?action=${action}`, {
+//         cache: "no-store"
+//       });
+
+//       if (res.ok) {
+
+//         return await res.json();
+
+//       }
+
+//     } catch (e) {
+//       console.warn(`Tentativa ${i + 1} falhou para ${action}`);
+//     }
+
+//     await esperar(500);
+
+//   }
+
+//   throw new Error(`Erro ao carregar ${action}`);
+
+// }
+
+async function api(action, params = {}, tentativas = 3) {
+
+  const query = new URLSearchParams({
+    action,
+    ...params
+  });
 
   for (let i = 0; i < tentativas; i++) {
 
     try {
 
-      const res = await fetch(`${API_URL}?action=${action}`, {
+      const res = await fetch(`${API_URL}?${query}`, {
         cache: "no-store"
       });
 
-      if (res.ok) {
-
-        return await res.json();
-
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
       }
 
+      return await res.json();
+
     } catch (e) {
-      console.warn(`Tentativa ${i + 1} falhou para ${action}`);
+
+      console.warn(`Tentativa ${i + 1} falhou para ${action}`, e);
+
+      if (i === tentativas - 1) {
+        throw e;
+      }
+
+      await esperar(500);
+
     }
 
-    await esperar(500);
-
   }
-
-  throw new Error(`Erro ao carregar ${action}`);
 
 }
