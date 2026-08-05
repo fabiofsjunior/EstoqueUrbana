@@ -14,3 +14,49 @@ body{
     background:#f4f6f9;
     padding:20px;
 }
+
+/* ===================================================
+   STATUS RETORNOS - CORES DAS LINHAS
+=================================================== */
+
+
+.linha-pendente{
+
+    background-color: rgba(220, 53, 69, 0.12);
+
+}
+
+
+
+.linha-envio{
+
+    background-color: rgba(255, 193, 7, 0.15);
+
+}
+
+
+
+.linha-finalizado{
+
+    background-color: rgba(40, 167, 69, 0.12);
+
+}
+
+
+
+/* melhora leitura */
+
+#retorno-body tr{
+
+    transition: 
+        background-color .2s ease;
+
+}
+
+
+
+#retorno-body tr:hover{
+
+    filter: brightness(0.96);
+
+}

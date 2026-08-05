@@ -24,6 +24,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await carregarReposicao();
 
+    await carregarRetornos();
+
+    iniciarFiltrosRetorno();
+
+    iniciarSelecaoRetorno();
+
     console.log("✅ Dashboard inicializado");
   } catch (erro) {
     console.error("❌ Erro ao iniciar dashboard:", erro);
