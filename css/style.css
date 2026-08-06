@@ -452,3 +452,210 @@ body {
 
   flex-shrink: 0;
 }
+
+/* =====================================================
+   MODAL FINALIZAR RETORNO
+===================================================== */
+
+#modalFinalizarRetorno {
+  display: none;
+
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 9999;
+
+  background: rgba(0, 0, 0, 0.45);
+
+  justify-content: center;
+
+  align-items: center;
+}
+
+/* =====================================================
+   CONTAINER PRINCIPAL
+===================================================== */
+
+.modal-finalizar-retorno-container {
+  background: #fff;
+
+  width: 520px;
+
+  max-width: 90%;
+
+  border-radius: 12px;
+
+  padding: 20px;
+
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+
+  animation: abrirModalFinalizar 0.2s ease;
+}
+
+@keyframes abrirModalFinalizar {
+  from {
+    opacity: 0;
+
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: scale(1);
+  }
+}
+
+/* =====================================================
+   CABEÇALHO
+===================================================== */
+
+.modal-finalizar-retorno-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  border-bottom: 1px solid #ddd;
+
+  padding-bottom: 10px;
+
+  margin-bottom: 15px;
+}
+
+.modal-finalizar-retorno-header h3 {
+  font-size: 18px;
+
+  margin: 0;
+}
+
+.btn-fechar-finalizar {
+  border: none;
+
+  background: none;
+
+  cursor: pointer;
+
+  font-size: 18px;
+}
+
+/* =====================================================
+   CAMPOS
+===================================================== */
+
+.modal-finalizar-retorno-body {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 12px;
+}
+
+.modal-finalizar-retorno-body .campo {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.modal-finalizar-retorno-body label {
+  font-size: 13px;
+
+  font-weight: bold;
+
+  color: #555;
+}
+
+.modal-finalizar-retorno-body input,
+.modal-finalizar-retorno-body textarea {
+  width: 100%;
+
+  padding: 8px;
+
+  border-radius: 6px;
+
+  border: 1px solid #ccc;
+
+  background: #f8f9fa;
+
+  font-size: 14px;
+}
+
+.modal-finalizar-retorno-body input[readonly] {
+  cursor: not-allowed;
+}
+
+/* =====================================================
+   OBSERVAÇÃO OCUPA LINHA COMPLETA
+===================================================== */
+
+.modal-finalizar-retorno-body .campo-observacao {
+  grid-column: 1 / -1;
+}
+
+.modal-finalizar-retorno-body textarea {
+  resize: none;
+
+  height: 80px;
+}
+
+/* =====================================================
+   RODAPÉ
+===================================================== */
+
+.modal-finalizar-retorno-footer {
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+.btn-cancelar-finalizar {
+  background: #ccc;
+
+  border: none;
+
+  padding: 8px 15px;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+}
+
+.btn-confirmar-finalizar {
+  background: #198754;
+
+  color: white;
+
+  border: none;
+
+  padding: 8px 15px;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+}
+
+.btn-confirmar-finalizar:hover {
+  background: #157347;
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+  .modal-finalizar-retorno-body {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-finalizar-retorno-container {
+    width: 95%;
+  }
+}

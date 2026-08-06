@@ -7,11 +7,13 @@
  *
  * - Renderizar tabela de retorno de componentes
  * - Aplicar cores por status
- * - Criar seleção dos registros
  * - Criar ações conforme status
+ * - Preparar dados para finalização
+ *
+ * Fonte:
+ * DashboardStore
  *
  * NÃO realiza chamadas API.
- * Dados vêm exclusivamente do DashboardStore.
  *
  * ============================================================
  */
@@ -35,7 +37,7 @@ function normalizarStatus(status) {
     return "SEPARADO PARA ENVIO";
   }
 
-  if (texto.startsWith("FINAL") || texto === "FINALZD") {
+  if (texto.startsWith("FINAL") || texto.includes("FINALZD")) {
     return "FINALIZADO";
   }
 
@@ -49,9 +51,7 @@ function normalizarStatus(status) {
  */
 
 function obterStatusRetorno(status) {
-  const normalizado = normalizarStatus(status);
-
-  switch (normalizado) {
+  switch (normalizarStatus(status)) {
     case "PENDENTE":
       return {
         classeLinha: "linha-pendente",
@@ -89,14 +89,12 @@ function obterStatusRetorno(status) {
 
 /**
  * ============================================================
- * BOTÃO DE AÇÃO
+ * AÇÃO POR STATUS
  * ============================================================
  */
 
 function obterAcaoRetorno(status) {
-  const normalizado = normalizarStatus(status);
-
-  switch (normalizado) {
+  switch (normalizarStatus(status)) {
     case "PENDENTE":
       return {
         icone: "✏️",
@@ -105,7 +103,7 @@ function obterAcaoRetorno(status) {
 
         classe: "btn-editar-retorno",
 
-        funcao: "editarRetorno",
+        tipo: "editar",
       };
 
     case "SEPARADO PARA ENVIO":
@@ -116,7 +114,7 @@ function obterAcaoRetorno(status) {
 
         classe: "btn-finalizar-retorno",
 
-        funcao: "finalizarRetorno",
+        tipo: "finalizar",
       };
 
     case "FINALIZADO":
@@ -127,14 +125,14 @@ function obterAcaoRetorno(status) {
 
         classe: "btn-finalizado-retorno",
 
-        funcao: null,
+        tipo: "bloqueado",
       };
   }
 }
 
 /**
  * ============================================================
- * RENDERIZA TABELA
+ * RENDER TABELA
  * ============================================================
  */
 
@@ -142,7 +140,7 @@ function renderTabelaRetornos(dados) {
   const tbody = document.getElementById("retorno-body");
 
   if (!tbody) {
-    console.warn("retorno-body não encontrado");
+    console.warn("⚠️ retorno-body não encontrado");
 
     return;
   }
@@ -163,10 +161,6 @@ function renderTabelaRetornos(dados) {
     return;
   }
 
-  /**
-   * PRIORIDADE STATUS
-   */
-
   const prioridade = {
     PENDENTE: 1,
 
@@ -177,8 +171,8 @@ function renderTabelaRetornos(dados) {
 
   dados.sort((a, b) => {
     return (
-      (prioridade[normalizarStatus(a.status)] || 99) -
-      (prioridade[normalizarStatus(b.status)] || 99)
+      prioridade[normalizarStatus(a.status)] -
+      prioridade[normalizarStatus(b.status)]
     );
   });
 
@@ -191,7 +185,7 @@ function renderTabelaRetornos(dados) {
 
     let botao = "";
 
-    if (acao.funcao) {
+    if (acao.tipo === "finalizar") {
       botao = `
 
       <button
@@ -201,9 +195,9 @@ function renderTabelaRetornos(dados) {
           ${acao.classe}
         "
 
-        onclick="
-          ${acao.funcao}('${item.linha}')
-        "
+
+        onclick='abrirModalFinalizarRetorno(${JSON.stringify(item)})'
+
 
         title="${acao.texto}"
 
@@ -212,6 +206,29 @@ function renderTabelaRetornos(dados) {
         ${acao.icone}
 
       </button>
+
+
+      `;
+    } else if (acao.tipo === "editar") {
+      botao = `
+
+      <button
+
+        class="
+          btn-acao-retorno
+          ${acao.classe}
+        "
+
+        onclick='editarRetorno("${item.linha}")'
+
+        title="${acao.texto}"
+
+      >
+
+        ${acao.icone}
+
+      </button>
+
 
       `;
     } else {
@@ -239,7 +256,6 @@ function renderTabelaRetornos(dados) {
 
     html += `
 
-
 <tr class="
   linha-retorno
   ${status.classeLinha}
@@ -254,11 +270,15 @@ type="checkbox"
 
 class="checkRetorno"
 
-data-linha="${item.linha}"
 
-data-chamado-pai="${item.chamadoPai || ""}"
+data-linha="${item.linha ?? ""}"
 
-data-chamado-filho="${item.chamadoFilho || ""}"
+
+data-chamado-pai="${item.chamadoPai ?? ""}"
+
+
+data-chamado-filho="${item.chamadoFilho ?? ""}"
+
 
 >
 
@@ -266,32 +286,33 @@ data-chamado-filho="${item.chamadoFilho || ""}"
 
 
 
+
 <td>
-${item.chamadoPai || "-"}
+${item.chamadoPai ?? "-"}
 </td>
 
 
 
 <td>
-${item.chamadoFilho || "-"}
+${item.chamadoFilho ?? "-"}
 </td>
 
 
 
 <td>
-${item.peca || "-"}
+${item.peca ?? "-"}
 </td>
 
 
 
 <td>
-${item.laboratorio || "-"}
+${item.laboratorio ?? "-"}
 </td>
 
 
 
 <td>
-${item.atm || "-"}
+${item.atm ?? "-"}
 </td>
 
 
@@ -309,7 +330,6 @@ ${status.texto}
 
 </span>
 
-
 </td>
 
 
@@ -323,7 +343,6 @@ ${botao}
 
 
 </tr>
-
 
 `;
   });

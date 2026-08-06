@@ -571,7 +571,102 @@
         </div>
       </div>
     </div>
+    <!-- =====================================================
+     MODAL FINALIZAR RETORNO DE COMPONENTES
+===================================================== -->
 
+    <div id="modalFinalizarRetorno">
+      <div class="modal-finalizar-retorno-container">
+        <!-- CABEÇALHO -->
+
+        <div class="modal-finalizar-retorno-header">
+          <h3>✅ Finalizar Retorno</h3>
+
+          <button
+            id="btnFecharFinalizar"
+            class="btn-fechar-finalizar"
+            title="Fechar"
+          >
+            ✖
+          </button>
+        </div>
+
+        <!-- CONTEÚDO -->
+
+        <div class="modal-finalizar-retorno-body">
+          <!-- CHAMADO PRINCIPAL -->
+
+          <div class="campo">
+            <label> Chamado Principal </label>
+
+            <input id="finalizarChamadoPai" type="text" readonly />
+          </div>
+
+          <!-- CHAMADO LABORATÓRIO -->
+
+          <div class="campo">
+            <label> Chamado Laboratório </label>
+
+            <input id="finalizarChamadoFilho" type="text" readonly />
+          </div>
+
+          <!-- LABORATÓRIO -->
+
+          <div class="campo">
+            <label> Laboratório </label>
+
+            <input id="finalizarLaboratorio" type="text" readonly />
+          </div>
+
+          <!-- ATM -->
+
+          <div class="campo">
+            <label> ATM </label>
+
+            <input id="finalizarATM" type="text" readonly />
+          </div>
+
+          <!-- PEÇA -->
+
+          <div class="campo campo-observacao">
+            <label> Peça </label>
+
+            <input id="finalizarPeca" type="text" readonly />
+          </div>
+
+          <!-- STATUS -->
+
+          <div class="campo">
+            <label> Status Atual </label>
+
+            <input id="finalizarStatus" type="text" readonly />
+          </div>
+
+          <!-- OBSERVAÇÃO -->
+
+          <div class="campo campo-observacao">
+            <label> Observação </label>
+
+            <textarea
+              id="finalizarObservacao"
+              placeholder="Informe uma observação..."
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- RODAPÉ -->
+
+        <div class="modal-finalizar-retorno-footer">
+          <button id="btnCancelarFinalizar" class="btn-cancelar-finalizar">
+            Cancelar
+          </button>
+
+          <button id="btnConfirmarFinalizar" class="btn-confirmar-finalizar">
+            ✅ Finalizar Chamado
+          </button>
+        </div>
+      </div>
+    </div>
     <!-- CORE -->
     <script src="js/core/api.js"></script>
     <!-- STATE -->
