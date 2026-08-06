@@ -2,125 +2,171 @@
 BOTÕES
 ========================================*/
 
-.btn-pdf{
-    background:#005bbb;
-    color:#fff;
-    border:none;
-    border-radius:8px;
-    padding:10px 16px;
-    cursor:pointer;
-    font-weight:600;
+.btn-pdf {
+  background: #005bbb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: 600;
 }
 
-.btn-pdf:hover{
-background:#00479a;
+.btn-pdf:hover {
+  background: #00479a;
 }
 
-.toolbar{
-display:flex;
-justify-content:flex-end;
-margin-bottom:12px;
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+/*==============================
+RETORNOS
+===============================*/
+
+.acoes-retorno {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
-/*========================================
-REPOSIÇÃO
-========================================*/
-
-.acoes-reposicao,
-.acoes-retorno{
-display:flex;
-align-items:center;
-gap:10px;
-margin-bottom:12px;
+.acoes-retorno input {
+  flex: 1;
 }
 
-.acoes-reposicao input,
-.acoes-retorno input{
-flex:1;
-padding:10px;
-border:1px solid #d1d5db;
-border-radius:8px;
+.acoes-retorno input,
+.acoes-retorno select {
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
 }
 
-.acoes-retorno select{
-padding:10px;
-border:1px solid #d1d5db;
-border-radius:8px;
-background:#fff;
+.toolbar-retorno {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 15px;
+
+  margin-bottom: 15px;
+
+  flex-wrap: wrap;
 }
 
-.status-zero{
-color:#dc2626;
-font-weight:bold;
+.contador-retornos {
+  flex: 1;
+
+  text-align: center;
+
+  font-weight: 600;
+
+  color: #666;
 }
 
-.status-baixo{
-color:#d97706;
-font-weight:bold;
+.acoes-direita {
+  display: flex;
+
+  gap: 10px;
+}
+
+@media (max-width: 900px) {
+  .acoes-retorno {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .toolbar-retorno {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .acoes-direita {
+    width: 100%;
+
+    justify-content: space-between;
+  }
+
+  .contador-retornos {
+    text-align: center;
+  }
+}
+
+.status-zero {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.status-baixo {
+  color: #d97706;
+  font-weight: bold;
 }
 
 /*========================================
 TOOLTIP
 ========================================*/
 
-.card.tooltip{
-position:relative;
-overflow:visible!important;
+.card.tooltip {
+  position: relative;
+  overflow: visible !important;
 }
 
-.card.tooltip::after{
-content:attr(data-tooltip);
-position:absolute;
-left:50%;
-bottom:105%;
-transform:translateX(-50%);
-width:260px;
-padding:12px;
-background:#1f2937;
-color:#fff;
-border-radius:10px;
-opacity:0;
-visibility:hidden;
-transition:.2s;
-z-index:999;
+.card.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: 105%;
+  transform: translateX(-50%);
+  width: 260px;
+  padding: 12px;
+  background: #1f2937;
+  color: #fff;
+  border-radius: 10px;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.2s;
+  z-index: 999;
 }
 
-.card.tooltip::before{
-content:"";
-position:absolute;
-left:50%;
-bottom:98%;
-transform:translateX(-50%);
-border:7px solid transparent;
-border-top-color:#1f2937;
-opacity:0;
-visibility:hidden;
+.card.tooltip::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 98%;
+  transform: translateX(-50%);
+  border: 7px solid transparent;
+  border-top-color: #1f2937;
+  opacity: 0;
+  visibility: hidden;
 }
 
 .card.tooltip:hover::after,
-.card.tooltip:hover::before{
-opacity:1;
-visibility:visible;
+.card.tooltip:hover::before {
+  opacity: 1;
+  visibility: visible;
 }
 
-.card.tooltip:hover::after{
-transform:translateX(-50%) translateY(-8px);
+.card.tooltip:hover::after {
+  transform: translateX(-50%) translateY(-8px);
 }
 
 /*========================================
 RESPONSIVO
 ========================================*/
 
-@media(max-width:900px){
+@media (max-width: 900px) {
+  .acoes-retorno,
+  .acoes-reposicao {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-.acoes-retorno,
-.acoes-reposicao{
-flex-direction:column;
-align-items:stretch;
-}
-
-.btn-pdf{
-width:100%;
-}
-
+  .btn-pdf {
+    width: 100%;
+  }
 }

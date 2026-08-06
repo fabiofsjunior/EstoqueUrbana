@@ -3,60 +3,216 @@
 @import url("./accordion.css");
 @import url("./componentes.css");
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:"Segoe UI",sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
 }
 
-body{
-    background:#f4f6f9;
-    padding:20px;
+body {
+  background: #f4f6f9;
+  padding: 20px;
 }
 
 /* ===================================================
    STATUS RETORNOS - CORES DAS LINHAS
 =================================================== */
 
-
-.linha-pendente{
-
-    background-color: rgba(220, 53, 69, 0.12);
-
+.linha-pendente {
+  background-color: rgba(220, 53, 69, 0.12);
 }
 
-
-
-.linha-envio{
-
-    background-color: rgba(255, 193, 7, 0.15);
-
+.linha-envio {
+  background-color: rgba(255, 193, 7, 0.15);
 }
 
-
-
-.linha-finalizado{
-
-    background-color: rgba(40, 167, 69, 0.12);
-
+.linha-finalizado {
+  background-color: rgba(40, 167, 69, 0.12);
 }
-
-
 
 /* melhora leitura */
 
-#retorno-body tr{
+#retorno-body tr {
+  transition: background-color 0.2s ease;
+}
 
-    transition: 
-        background-color .2s ease;
+#retorno-body tr:hover {
+  filter: brightness(0.96);
+}
+
+/* =====================================================
+   MODAL EDITAR RETORNO
+===================================================== */
+
+.modal-retorno {
+  display: none;
+
+  position: fixed;
+
+  z-index: 9999;
+
+  left: 0;
+
+  top: 0;
+
+  width: 100%;
+
+  height: 100%;
+
+  background: rgba(0, 0, 0, 0.45);
+
+  justify-content: center;
+
+  align-items: center;
+}
+
+/* Caixa principal */
+
+.modal-retorno-conteudo {
+  background: white;
+
+  width: 420px;
+
+  max-width: 90%;
+
+  border-radius: 12px;
+
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+
+  padding: 20px;
+}
+
+/* Cabeçalho */
+
+.modal-retorno-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  border-bottom: 1px solid #ddd;
+
+  margin-bottom: 15px;
+}
+
+.modal-retorno-header h3 {
+  margin: 0;
+}
+
+/* Botão fechar */
+
+.btn-fechar-modal {
+  border: none;
+
+  background: none;
+
+  cursor: pointer;
+
+  font-size: 18px;
+}
+
+/* Corpo */
+
+.modal-retorno-body {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.modal-retorno-body label {
+  font-weight: bold;
+
+  font-size: 14px;
+}
+
+.modal-retorno-body input {
+  padding: 8px;
+
+  border-radius: 6px;
+
+  border: 1px solid #ccc;
+}
+
+/* Rodapé */
+
+.modal-retorno-footer {
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+.btn-cancelar {
+  background: #ccc;
+
+  border: none;
+
+  padding: 8px 15px;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+}
+
+.btn-confirmar {
+  background: #198754;
+
+  color: white;
+
+  border: none;
+
+  padding: 8px 15px;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+}
+
+/* =====================================================
+   CAMPOS SOMENTE LEITURA - MODAL RETORNO
+===================================================== */
+
+
+.modal-retorno-body input[readonly] {
+
+    background-color: #e9ecef;
+
+    color: #555;
+
+    cursor: not-allowed;
+
+    border-color: #ccc;
 
 }
 
 
 
-#retorno-body tr:hover{
+/* Campo editável */
 
-    filter: brightness(0.96);
+.modal-retorno-body input:not([readonly]) {
+
+    background-color: #ffffff;
+
+    border-color: #198754;
+
+}
+
+
+/* Destaque quando usuário clicar */
+
+.modal-retorno-body input:not([readonly]):focus {
+
+    outline:none;
+
+    border-color:#0d6efd;
+
+    box-shadow:0 0 0 3px rgba(13,110,253,.15);
 
 }

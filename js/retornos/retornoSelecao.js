@@ -1,156 +1,143 @@
+/**
+ * ==========================================================
+ * SELEÇÃO DOS RETORNOS
+ * ==========================================================
+ *
+ * Responsável por:
+ *
+ * ✔ Selecionar itens
+ * ✔ Selecionar todos os itens visíveis
+ * ✔ Atualizar contador
+ * ✔ Exibir botão Duplicar
+ * ✔ Preparar futuras ações em lote
+ *
+ * ==========================================================
+ */
+
 let retornosSelecionados = [];
 
-
 /**
- * Inicializa seleção dos retornos
+ * ==========================================================
+ * Inicializa eventos
+ * ==========================================================
  */
-function iniciarSelecaoRetorno(){
 
+function iniciarSelecaoRetorno() {
+  const tbody = document.getElementById("retorno-body");
 
-    const tbody =
-        document.getElementById(
-            "retorno-body"
-        );
+  if (!tbody) return;
 
-
-    if(!tbody) return;
-
-
-
-    tbody.addEventListener(
-        "change",
-        function(e){
-
-
-            if(
-                !e.target.classList.contains(
-                    "checkRetorno"
-                )
-            ){
-                return;
-            }
-
-
-
-            atualizarSelecaoRetorno();
-
-
-        }
-    );
-
-
-
-    const btnTodos =
-        document.getElementById(
-            "btnSelecionarTodosRetorno"
-        );
-
-
-
-    if(btnTodos){
-
-        btnTodos.addEventListener(
-            "click",
-            selecionarTodosRetornos
-        );
-
+  tbody.addEventListener("change", function (e) {
+    if (!e.target.classList.contains("checkRetorno")) {
+      return;
     }
 
-
-}
-
-
-
-/**
- * Atualiza lista selecionada
- */
-function atualizarSelecaoRetorno(){
-
-
-    retornosSelecionados =
-        Array.from(
-            document.querySelectorAll(
-                ".checkRetorno:checked"
-            )
-        )
-        .map(check =>
-            Number(
-                check.dataset.linha
-            )
-        );
-
-
-
-    atualizarBotaoDuplicar();
-
-
-}
-
-
-
-
-/**
- * Seleciona todos
- */
-function selecionarTodosRetornos(){
-
-
-    const checks =
-        document.querySelectorAll(
-            ".checkRetorno"
-        );
-
-
-
-    const todosMarcados =
-
-        Array.from(checks)
-        .every(
-            c=>c.checked
-        );
-
-
-
-    checks.forEach(check=>{
-
-        check.checked =
-            !todosMarcados;
-
-    });
-
-
-
     atualizarSelecaoRetorno();
+  });
 
+  const btnTodos = document.getElementById("btnSelecionarTodosRetorno");
 
+  if (btnTodos) {
+    btnTodos.addEventListener("click", selecionarTodosRetornos);
+  }
+
+  atualizarSelecaoRetorno();
 }
 
+/**
+ * ==========================================================
+ * Atualiza lista de selecionados
+ * ==========================================================
+ */
 
+function atualizarSelecaoRetorno() {
+  retornosSelecionados = Array.from(
+    document.querySelectorAll(".checkRetorno:checked"),
+  ).map((check) => ({
+    chamadoPai: check.dataset.chamadoPai,
+
+    chamadoFilho: check.dataset.chamadoFilho,
+  }));
+
+  atualizarContadorRetornos();
+
+  atualizarEstadoBotoes();
+}
 
 /**
- * Exibe botão duplicar
+ * ==========================================================
+ * Seleciona / Desmarca todos os itens visíveis
+ * ==========================================================
  */
-function atualizarBotaoDuplicar(){
 
+function selecionarTodosRetornos() {
+  const checks = document.querySelectorAll(".checkRetorno");
 
-    const botao =
-        document.getElementById(
-            "btnDuplicarRetorno"
-        );
+  if (!checks.length) return;
 
+  const todosMarcados = Array.from(checks).every((check) => check.checked);
 
+  checks.forEach((check) => {
+    check.checked = !todosMarcados;
+  });
 
-    if(!botao) return;
+  atualizarSelecaoRetorno();
+}
 
+/**
+ * ==========================================================
+ * Atualiza contador
+ * ==========================================================
+ */
 
+function atualizarContadorRetornos() {
+  const contador = document.getElementById("contadorRetornos");
 
-    botao.style.display =
+  if (!contador) return;
 
-        retornosSelecionados.length > 0
+  const total = document.querySelectorAll(".checkRetorno").length;
 
-        ? "inline-block"
+  const selecionados = document.querySelectorAll(
+    ".checkRetorno:checked",
+  ).length;
 
-        : "none";
+  if (total === 0) {
+    contador.textContent = "Nenhum retorno";
 
+    return;
+  }
 
+  if (selecionados === 0) {
+    contador.textContent = "Nenhum item selecionado";
+
+    return;
+  }
+
+  contador.textContent = `${selecionados} de ${total} selecionado${selecionados > 1 ? "s" : ""}`;
+}
+
+/**
+ * ==========================================================
+ * Atualiza estado dos botões
+ * ==========================================================
+ */
+
+function atualizarEstadoBotoes() {
+  const btnDuplicar = document.getElementById("btnDuplicarRetorno");
+
+  if (btnDuplicar) {
+    btnDuplicar.style.display = retornosSelecionados.length
+      ? "inline-flex"
+      : "none";
+  }
+}
+
+/**
+ * ==========================================================
+ * Retorna os itens selecionados
+ * ==========================================================
+ */
+
+function obterRetornosSelecionados() {
+  return [...retornosSelecionados];
 }

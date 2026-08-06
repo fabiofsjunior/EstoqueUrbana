@@ -15,6 +15,162 @@
  * ============================================================
  */
 
+/**
+ * ============================================================
+ * NORMALIZA STATUS
+ * ============================================================
+ *
+ * Corrige pequenas variações de escrita vindas da planilha.
+ *
+ * Exemplos aceitos:
+ *
+ * FINALZD
+ * finalizado
+ * Finalizado
+ * FINALIZADO
+ * separado envio
+ * separado para envio
+ *
+ */
+
+function normalizarStatus(status) {
+  const texto = String(status || "")
+    .trim()
+    .toUpperCase();
+
+  if (texto.startsWith("PEND")) {
+    return "PENDENTE";
+  }
+
+  if (texto.includes("SEPARADO") || texto.includes("ENVIO")) {
+    return "SEPARADO PARA ENVIO";
+  }
+
+  if (texto.startsWith("FINAL") || texto === "FINALZD") {
+    return "FINALIZADO";
+  }
+
+  return "PENDENTE";
+}
+
+/**
+ * ============================================================
+ * STATUS VISUAL
+ * ============================================================
+ */
+
+function obterStatusRetorno(status) {
+  status = normalizarStatus(status);
+
+  switch (status) {
+    case "PENDENTE":
+      return {
+        classeLinha: "linha-pendente",
+
+        classeStatus: "status-pendente",
+
+        icone: "🟥",
+
+        texto: "PENDENTE",
+      };
+
+    case "SEPARADO PARA ENVIO":
+      return {
+        classeLinha: "linha-envio",
+
+        classeStatus: "status-envio",
+
+        icone: "🟨",
+
+        texto: "SEPARADO PARA ENVIO",
+      };
+
+    case "FINALIZADO":
+      return {
+        classeLinha: "linha-finalizado",
+
+        classeStatus: "status-finalizado",
+
+        icone: "🟩",
+
+        texto: "FINALIZADO",
+      };
+
+    default:
+      return {
+        classeLinha: "linha-pendente",
+
+        classeStatus: "status-pendente",
+
+        icone: "🟥",
+
+        texto: "PENDENTE",
+      };
+  }
+}
+
+/**
+ * ============================================================
+ * AÇÃO POR STATUS
+ * ============================================================
+ */
+
+function obterAcaoRetorno(status) {
+  status = normalizarStatus(status);
+
+  switch (status) {
+    case "PENDENTE":
+      return {
+        icone: "✏️",
+
+        texto: "Editar",
+
+        classe: "btn-editar-retorno",
+
+        funcao: "editarRetorno",
+      };
+
+    case "SEPARADO PARA ENVIO":
+      return {
+        icone: "✅",
+
+        texto: "Finalizar",
+
+        classe: "btn-finalizar-retorno",
+
+        funcao: "finalizarRetorno",
+      };
+
+    case "FINALIZADO":
+      return {
+        icone: "🔒",
+
+        texto: "Finalizado",
+
+        classe: "btn-finalizado-retorno",
+
+        funcao: null,
+      };
+
+    default:
+      return {
+        icone: "⚙️",
+
+        texto: "Ação",
+
+        classe: "",
+
+        funcao: null,
+      };
+  }
+}
+
+/**
+ * ============================================================
+ * RENDERIZA TABELA
+ * ============================================================
+ */
+
 function renderTabelaRetornos(dados) {
   const tbody = document.getElementById("retorno-body");
 
@@ -29,24 +185,26 @@ function renderTabelaRetornos(dados) {
   if (!Array.isArray(dados) || dados.length === 0) {
     tbody.innerHTML = `
 
-            <tr>
+      <tr>
 
-                <td colspan="8" style="text-align:center">
+        <td colspan="8" style="text-align:center">
 
-                    Nenhum retorno encontrado.
+          Nenhum retorno encontrado.
 
-                </td>
+        </td>
 
-            </tr>
+      </tr>
 
-        `;
+    `;
 
     return;
   }
 
-  // ============================================================
-  // ORDENA PRIORIDADE POR STATUS
-  // ============================================================
+  /**
+   * ==========================================================
+   * ORDENAÇÃO POR PRIORIDADE
+   * ==========================================================
+   */
 
   const prioridadeStatus = {
     PENDENTE: 1,
@@ -57,8 +215,12 @@ function renderTabelaRetornos(dados) {
   };
 
   dados.sort((a, b) => {
+    const statusA = normalizarStatus(a.status);
+
+    const statusB = normalizarStatus(b.status);
+
     return (
-      (prioridadeStatus[a.status] || 99) - (prioridadeStatus[b.status] || 99)
+      (prioridadeStatus[statusA] || 99) - (prioridadeStatus[statusB] || 99)
     );
   });
 
@@ -67,165 +229,188 @@ function renderTabelaRetornos(dados) {
   dados.forEach((item) => {
     const statusInfo = obterStatusRetorno(item.status);
 
+    const acao = obterAcaoRetorno(item.status);
+
+    const linha = item.linha ?? "";
+
+    let botaoAcao = "";
+
+    if (acao.funcao) {
+      botaoAcao = `
+
+
+        <button
+
+
+          class="btn-acao-retorno ${acao.classe}"
+
+
+          onclick="${acao.funcao}('${linha}')"
+
+
+          title="${acao.texto}"
+
+
+        >
+
+
+          ${acao.icone}
+
+
+        </button>
+
+
+      `;
+    } else {
+      botaoAcao = `
+
+
+        <button
+
+
+          class="btn-acao-retorno ${acao.classe}"
+
+
+          disabled
+
+
+          title="${acao.texto}"
+
+
+        >
+
+
+          ${acao.icone}
+
+
+        </button>
+
+
+      `;
+    }
+
     html += `
 
-        <tr class="linha-retorno ${statusInfo.classeLinha}">
 
-
-            <td>
-
-                <input
-
-                    type="checkbox"
-
-                    class="checkRetorno"
-
-                    data-chamado-pai="${item.chamadoPai ?? ""}"
-
-                    data-chamado-filho="${item.chamadoFilho ?? ""}"
-
-                >
-
-            </td>
+      <tr class="linha-retorno ${statusInfo.classeLinha}">
 
 
 
-            <td>
-
-                ${item.chamadoPai ?? "-"}
-
-            </td>
+        <td>
 
 
-
-            <td>
-
-                ${item.chamadoFilho ?? "-"}
-
-            </td>
+          <input
 
 
-
-            <td>
-
-                ${item.peca ?? "-"}
-
-            </td>
+            type="checkbox"
 
 
+            class="checkRetorno"
 
-            <td>
 
-                ${item.laboratorio ?? "-"}
+            data-linha="${linha}"
 
-            </td>
+
+            data-chamado-pai="${item.chamadoPai ?? ""}"
+
+
+            data-chamado-filho="${item.chamadoFilho ?? ""}"
+
+
+          >
+
+
+        </td>
 
 
 
-            <td>
+        <td>
 
-                ${item.atm ?? "-"}
+          ${item.chamadoPai ?? "-"}
 
-            </td>
-
-
-
-            <td>
-
-                <span class="status-retorno ${statusInfo.classeLinha}">
-
-                    ${statusInfo.icone}
-
-                    ${item.status ?? "PENDENTE"}
-
-                </span>
-
-            </td>
+        </td>
 
 
 
-            <td>
+        <td>
 
-                <button
+          ${item.chamadoFilho ?? "-"}
 
-                    class="btn-acao-retorno"
-
-                    onclick="abrirDetalheRetorno('${item.chamadoPai ?? ""}')"
-
-                >
-
-                    ⚙️
-
-                </button>
-
-
-            </td>
+        </td>
 
 
 
-        </tr>
+        <td>
+
+          ${item.peca ?? "-"}
+
+        </td>
 
 
-        `;
+
+        <td>
+
+          ${item.laboratorio ?? "-"}
+
+        </td>
+
+
+
+        <td>
+
+          ${item.atm ?? "-"}
+
+        </td>
+
+
+
+        <td>
+
+
+          <span class="status-retorno ${statusInfo.classeStatus}">
+
+
+            ${statusInfo.icone}
+
+
+            ${statusInfo.texto}
+
+
+          </span>
+
+
+        </td>
+
+
+
+        <td>
+
+
+          ${botaoAcao}
+
+
+        </td>
+
+
+
+      </tr>
+
+
+    `;
   });
 
   tbody.innerHTML = html;
+
+  /**
+   * Atualiza contador dos selecionados
+   */
+
+  atualizarContadorRetornos();
 }
 
 /**
  * ============================================================
- * STATUS VISUAL
- * ============================================================
- */
-
-function obterStatusRetorno(status) {
-  switch (status) {
-    case "PENDENTE":
-      return {
-        classeLinha: "linha-pendente",
-
-        classeStatus: "status-pendente",
-
-        icone: "🟥",
-      };
-
-    case "SEPARADO PARA ENVIO":
-      return {
-        classeLinha: "linha-envio",
-
-        classeStatus: "status-envio",
-
-        icone: "🟨",
-      };
-
-    case "FINALIZADO":
-      return {
-        classeLinha: "linha-finalizado",
-
-        classeStatus: "status-finalizado",
-
-        icone: "🟩",
-      };
-
-    default:
-      return {
-        classeLinha: "",
-
-        classeStatus: "",
-
-        icone: "⬜",
-      };
-  }
-}
-
-/**
- * ============================================================
- * FUNÇÃO AUXILIAR PARA ATUALIZAÇÃO
- * ============================================================
- *
- * Permite redesenhar a tabela
- * após filtros ou alterações.
- *
+ * ATUALIZA TABELA
  * ============================================================
  */
 

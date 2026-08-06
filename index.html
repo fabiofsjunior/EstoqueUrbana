@@ -382,6 +382,10 @@
 
       <div class="accordion-content">
         <section class="box">
+          <!-- ===========================
+                 LINHA 1 - FILTROS
+            ============================ -->
+
           <div class="acoes-retorno">
             <input
               id="filtroRetorno"
@@ -391,37 +395,51 @@
 
             <select id="filtroLaboratorio">
               <option value="">🏢 Todos os Laboratórios</option>
-
               <option value="FILIAL">FILIAL</option>
-
               <option value="MATRIZ">MATRIZ</option>
             </select>
 
             <select id="filtroStatus">
               <option value="">Todos os Status</option>
-
               <option value="PENDENTE">🟥 Pendente</option>
-
               <option value="SEPARADO PARA ENVIO">
                 🟨 Separado para Envio
               </option>
-
               <option value="FINALIZADO">🟩 Finalizado</option>
             </select>
+          </div>
 
+          <!-- ===========================
+                 LINHA 2 - AÇÕES
+            ============================ -->
+
+          <div class="toolbar-retorno">
             <button id="btnSelecionarTodosRetorno" class="btn-pdf">
               ☑ Selecionar Todos
             </button>
 
-            <button id="btnPdfRetorno" class="btn-pdf">📄 Imprimir PDF</button>
-            <button
-              id="btnDuplicarRetorno"
-              class="btn-pdf"
-              style="display: none"
-            >
-              📑 Duplicar Chamado
-            </button>
+            <span id="contadorRetornos" class="contador-retornos">
+              Nenhum item selecionado
+            </span>
+
+            <div class="acoes-direita">
+              <button id="btnPdfRetorno" class="btn-pdf">
+                📄 Imprimir PDF
+              </button>
+
+              <button
+                id="btnDuplicarRetorno"
+                class="btn-pdf"
+                style="display: none"
+              >
+                📑 Duplicar Chamado
+              </button>
+            </div>
           </div>
+
+          <!-- ===========================
+                 TABELA
+            ============================ -->
 
           <div class="scroll-movimentacoes">
             <table>
@@ -451,6 +469,54 @@
         </section>
       </div>
     </details>
+
+    <!-- =====================================================
+     MODAL EDITAR RETORNO
+===================================================== -->
+
+    <div id="modalEditarRetorno" class="modal-retorno">
+      <div class="modal-retorno-conteudo">
+        <div class="modal-retorno-header">
+          <h3>✏️ Editar Retorno</h3>
+
+          <button id="fecharModalRetorno" class="btn-fechar-modal">✖</button>
+        </div>
+
+        <div class="modal-retorno-body">
+          <input type="hidden" id="retornoLinha" />
+
+          <label> Chamado Principal </label>
+
+          <input id="retornoChamadoPrincipal" readonly />
+
+          <label> Chamado Laboratório </label>
+
+          <input id="retornoChamadoLaboratorio" placeholder="#0726-000000" />
+
+          <label> ATM </label>
+
+          <input id="retornoATM" readonly />
+
+          <label> Peça </label>
+
+          <input id="retornoPeca" readonly />
+
+          <label> Laboratório </label>
+
+          <input id="retornoLaboratorio" readonly />
+        </div>
+
+        <div class="modal-retorno-footer">
+          <button id="cancelarEdicaoRetorno" class="btn-cancelar">
+            Cancelar
+          </button>
+
+          <button id="salvarEdicaoRetorno" class="btn-confirmar">
+            💾 Salvar
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- CORE -->
     <script src="js/core/api.js"></script>
@@ -491,7 +557,7 @@
     <script src="js/retornos/retornoFiltro.js"></script>
     <script src="js/retornos/retornoPdf.js"></script>
     <script src="js/retornos/retornoChamado.js"></script>
-    <script src="js/retornos/retornoFinalizar.js"></script> 
+    <script src="js/retornos/retornoFinalizar.js"></script>
     <script src="js/retornos/retornoSelecao.js"></script>
 
     <!-- LOADER -->
