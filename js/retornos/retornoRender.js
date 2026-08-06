@@ -5,12 +5,13 @@
  *
  * Responsável por:
  *
- * - Renderizar a tabela de retorno de componentes
- * - Aplicar destaque visual conforme status
- * - Controlar seleção dos chamados
+ * - Renderizar tabela de retorno de componentes
+ * - Aplicar cores por status
+ * - Criar seleção dos registros
+ * - Criar ações conforme status
  *
- * Dados vêm do DashboardStore.
- * Não realiza chamadas API.
+ * NÃO realiza chamadas API.
+ * Dados vêm exclusivamente do DashboardStore.
  *
  * ============================================================
  */
@@ -19,18 +20,6 @@
  * ============================================================
  * NORMALIZA STATUS
  * ============================================================
- *
- * Corrige pequenas variações de escrita vindas da planilha.
- *
- * Exemplos aceitos:
- *
- * FINALZD
- * finalizado
- * Finalizado
- * FINALIZADO
- * separado envio
- * separado para envio
- *
  */
 
 function normalizarStatus(status) {
@@ -60,9 +49,9 @@ function normalizarStatus(status) {
  */
 
 function obterStatusRetorno(status) {
-  status = normalizarStatus(status);
+  const normalizado = normalizarStatus(status);
 
-  switch (status) {
+  switch (normalizado) {
     case "PENDENTE":
       return {
         classeLinha: "linha-pendente",
@@ -95,30 +84,19 @@ function obterStatusRetorno(status) {
 
         texto: "FINALIZADO",
       };
-
-    default:
-      return {
-        classeLinha: "linha-pendente",
-
-        classeStatus: "status-pendente",
-
-        icone: "🟥",
-
-        texto: "PENDENTE",
-      };
   }
 }
 
 /**
  * ============================================================
- * AÇÃO POR STATUS
+ * BOTÃO DE AÇÃO
  * ============================================================
  */
 
 function obterAcaoRetorno(status) {
-  status = normalizarStatus(status);
+  const normalizado = normalizarStatus(status);
 
-  switch (status) {
+  switch (normalizado) {
     case "PENDENTE":
       return {
         icone: "✏️",
@@ -151,17 +129,6 @@ function obterAcaoRetorno(status) {
 
         funcao: null,
       };
-
-    default:
-      return {
-        icone: "⚙️",
-
-        texto: "Ação",
-
-        classe: "",
-
-        funcao: null,
-      };
   }
 }
 
@@ -175,7 +142,7 @@ function renderTabelaRetornos(dados) {
   const tbody = document.getElementById("retorno-body");
 
   if (!tbody) {
-    console.warn("⚠️ retorno-body não encontrado");
+    console.warn("retorno-body não encontrado");
 
     return;
   }
@@ -186,13 +153,9 @@ function renderTabelaRetornos(dados) {
     tbody.innerHTML = `
 
       <tr>
-
-        <td colspan="8" style="text-align:center">
-
+        <td colspan="8">
           Nenhum retorno encontrado.
-
         </td>
-
       </tr>
 
     `;
@@ -201,12 +164,10 @@ function renderTabelaRetornos(dados) {
   }
 
   /**
-   * ==========================================================
-   * ORDENAÇÃO POR PRIORIDADE
-   * ==========================================================
+   * PRIORIDADE STATUS
    */
 
-  const prioridadeStatus = {
+  const prioridade = {
     PENDENTE: 1,
 
     "SEPARADO PARA ENVIO": 2,
@@ -215,76 +176,63 @@ function renderTabelaRetornos(dados) {
   };
 
   dados.sort((a, b) => {
-    const statusA = normalizarStatus(a.status);
-
-    const statusB = normalizarStatus(b.status);
-
     return (
-      (prioridadeStatus[statusA] || 99) - (prioridadeStatus[statusB] || 99)
+      (prioridade[normalizarStatus(a.status)] || 99) -
+      (prioridade[normalizarStatus(b.status)] || 99)
     );
   });
 
   let html = "";
 
   dados.forEach((item) => {
-    const statusInfo = obterStatusRetorno(item.status);
+    const status = obterStatusRetorno(item.status);
 
     const acao = obterAcaoRetorno(item.status);
 
-    const linha = item.linha ?? "";
-
-    let botaoAcao = "";
+    let botao = "";
 
     if (acao.funcao) {
-      botaoAcao = `
+      botao = `
 
+      <button
 
-        <button
+        class="
+          btn-acao-retorno
+          ${acao.classe}
+        "
 
+        onclick="
+          ${acao.funcao}('${item.linha}')
+        "
 
-          class="btn-acao-retorno ${acao.classe}"
+        title="${acao.texto}"
 
+      >
 
-          onclick="${acao.funcao}('${linha}')"
+        ${acao.icone}
 
-
-          title="${acao.texto}"
-
-
-        >
-
-
-          ${acao.icone}
-
-
-        </button>
-
+      </button>
 
       `;
     } else {
-      botaoAcao = `
+      botao = `
 
+      <button
 
-        <button
+        class="
+          btn-acao-retorno
+          ${acao.classe}
+        "
 
+        disabled
 
-          class="btn-acao-retorno ${acao.classe}"
+        title="${acao.texto}"
 
+      >
 
-          disabled
+        ${acao.icone}
 
-
-          title="${acao.texto}"
-
-
-        >
-
-
-          ${acao.icone}
-
-
-        </button>
-
+      </button>
 
       `;
     }
@@ -292,125 +240,104 @@ function renderTabelaRetornos(dados) {
     html += `
 
 
-      <tr class="linha-retorno ${statusInfo.classeLinha}">
+<tr class="
+  linha-retorno
+  ${status.classeLinha}
+">
 
 
+<td>
 
-        <td>
+<input
 
+type="checkbox"
 
-          <input
+class="checkRetorno"
 
+data-linha="${item.linha}"
 
-            type="checkbox"
+data-chamado-pai="${item.chamadoPai || ""}"
 
+data-chamado-filho="${item.chamadoFilho || ""}"
 
-            class="checkRetorno"
+>
 
+</td>
 
-            data-linha="${linha}"
 
 
-            data-chamado-pai="${item.chamadoPai ?? ""}"
+<td>
+${item.chamadoPai || "-"}
+</td>
 
 
-            data-chamado-filho="${item.chamadoFilho ?? ""}"
 
+<td>
+${item.chamadoFilho || "-"}
+</td>
 
-          >
 
 
-        </td>
+<td>
+${item.peca || "-"}
+</td>
 
 
 
-        <td>
+<td>
+${item.laboratorio || "-"}
+</td>
 
-          ${item.chamadoPai ?? "-"}
 
-        </td>
 
+<td>
+${item.atm || "-"}
+</td>
 
 
-        <td>
 
-          ${item.chamadoFilho ?? "-"}
+<td>
 
-        </td>
+<span class="
+status-retorno
+${status.classeStatus}
+">
 
+${status.icone}
 
+${status.texto}
 
-        <td>
+</span>
 
-          ${item.peca ?? "-"}
 
-        </td>
+</td>
 
 
 
-        <td>
+<td>
 
-          ${item.laboratorio ?? "-"}
+${botao}
 
-        </td>
+</td>
 
 
 
-        <td>
+</tr>
 
-          ${item.atm ?? "-"}
 
-        </td>
-
-
-
-        <td>
-
-
-          <span class="status-retorno ${statusInfo.classeStatus}">
-
-
-            ${statusInfo.icone}
-
-
-            ${statusInfo.texto}
-
-
-          </span>
-
-
-        </td>
-
-
-
-        <td>
-
-
-          ${botaoAcao}
-
-
-        </td>
-
-
-
-      </tr>
-
-
-    `;
+`;
   });
 
   tbody.innerHTML = html;
 
-  /**
-   * Atualiza contador dos selecionados
-   */
-
-  atualizarContadorRetornos();
+  if (typeof atualizarContadorRetornos === "function") {
+    atualizarContadorRetornos();
+  }
 }
 
 /**
  * ============================================================
- * ATUALIZA TABELA
+ * ATUALIZAÇÃO MANUAL
  * ============================================================
  */
 
