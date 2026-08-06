@@ -251,3 +251,45 @@ document.addEventListener("DOMContentLoaded", () => {
     btnSalvar.onclick = salvarEdicaoRetorno;
   }
 });
+
+/**
+ * ============================================================
+ * MOSTRA LOADING NO BOTÃO SALVAR
+ * ============================================================
+ */
+
+function mostrarLoadingRetorno() {
+  const botao = document.getElementById("salvarEdicaoRetorno");
+
+  if (!botao) {
+    return;
+  }
+
+  botao.disabled = true;
+
+  botao.innerHTML = `
+
+    <span class="spinnerRetorno"></span>
+
+    Salvando...
+
+  `;
+}
+
+/**
+ * ============================================================
+ * REMOVE LOADING DO BOTÃO SALVAR
+ * ============================================================
+ */
+
+function esconderLoadingRetorno() {
+  const botao = document.getElementById("salvarEdicaoRetorno");
+
+  if (!botao) {
+    return;
+  }
+
+  botao.disabled = false;
+
+  botao.innerHTML = "Salvar";
+}

@@ -179,40 +179,63 @@ body {
    CAMPOS SOMENTE LEITURA - MODAL RETORNO
 ===================================================== */
 
-
 .modal-retorno-body input[readonly] {
+  background-color: #e9ecef;
 
-    background-color: #e9ecef;
+  color: #555;
 
-    color: #555;
+  cursor: not-allowed;
 
-    cursor: not-allowed;
-
-    border-color: #ccc;
-
+  border-color: #ccc;
 }
-
-
 
 /* Campo editável */
 
 .modal-retorno-body input:not([readonly]) {
+  background-color: #ffffff;
 
-    background-color: #ffffff;
-
-    border-color: #198754;
-
+  border-color: #198754;
 }
-
 
 /* Destaque quando usuário clicar */
 
 .modal-retorno-body input:not([readonly]):focus {
+  outline: none;
 
-    outline:none;
+  border-color: #0d6efd;
 
-    border-color:#0d6efd;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+}
+/* ==========================================================
+   LOADING BOTÃO RETORNO
+   ========================================================== */
 
-    box-shadow:0 0 0 3px rgba(13,110,253,.15);
+.spinnerRetorno {
+  display: inline-block;
 
+  width: 14px;
+
+  height: 14px;
+
+  margin-right: 8px;
+
+  border: 2px solid rgba(255, 255, 255, 0.5);
+
+  border-top-color: #ffffff;
+
+  border-radius: 50%;
+
+  animation: girarSpinnerRetorno 0.8s linear infinite;
+
+  vertical-align: middle;
+}
+
+@keyframes girarSpinnerRetorno {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
