@@ -347,6 +347,12 @@
               type="text"
               placeholder="🔎 Buscar peça..."
             />
+            <select id="statusReposicao">
+              <option value="">Todos os status</option>
+              <option value="zerado">🔴 Zerado</option>
+              <option value="baixo">🟡 Estoque Baixo</option>
+              <option value="normal">🟢 Estoque Normal</option>
+            </select>
           </div>
 
           <!-- ==========================================
@@ -384,8 +390,6 @@
                   <th>Descrição</th>
 
                   <th>Saldo Atual</th>
-
-                  <th>Quantidade Solicitar</th>
 
                   <th>Status</th>
                 </tr>

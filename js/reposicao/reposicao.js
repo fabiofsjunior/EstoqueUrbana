@@ -7,18 +7,12 @@
  *
  * - Renderizar estoque completo
  * - Classificar situação do estoque
- * - Controlar seleção
  * - Atualizar contador
+ * - Controlar seleção
  *
- * Fonte:
- * DashboardStore
+ * Não gera quantidade solicitada.
+ * Essa informação pertence apenas ao modal.
  *
- * ============================================================
- */
-
-/**
- * ============================================================
- * RENDERIZA TABELA
  * ============================================================
  */
 
@@ -27,7 +21,6 @@ function renderReposicao(dados) {
 
   if (!tbody) {
     console.warn("⚠️ reposicao-body não encontrado");
-
     return;
   }
 
@@ -35,18 +28,14 @@ function renderReposicao(dados) {
 
   if (!Array.isArray(dados) || dados.length === 0) {
     tbody.innerHTML = `
+      <tr>
+        <td colspan="5" style="text-align:center">
+          Nenhuma peça encontrada.
+        </td>
+      </tr>
+    `;
 
-        <tr>
-
-            <td colspan="6" style="text-align:center">
-
-                Nenhuma peça encontrada.
-
-            </td>
-
-        </tr>
-
-        `;
+    atualizarContadorReposicao();
 
     return;
   }
@@ -60,103 +49,57 @@ function renderReposicao(dados) {
     let statusTexto = "";
     let statusClasse = "";
 
-    if (saldo <= 0) {
+    //-----------------------------------------
+    // CLASSIFICAÇÃO
+    //-----------------------------------------
+
+    if (saldo === 0) {
       classeLinha = "linha-zerado";
-
       statusTexto = "🔴 ZERADO";
-
       statusClasse = "status-zerado";
-    } else if (saldo < 5) {
+    } else if (saldo <= 10) {
       classeLinha = "linha-critico";
-
       statusTexto = "🟡 ESTOQUE BAIXO";
-
       statusClasse = "status-critico";
     } else {
       classeLinha = "linha-normal";
-
-      statusTexto = "🟢 NORMAL";
-
+      statusTexto = "🟢 ESTOQUE NORMAL";
       statusClasse = "status-normal";
     }
 
     html += `
 
+      <tr class="${classeLinha}">
 
-        <tr class="${classeLinha}">
+        <td>
 
+          <input
+            type="checkbox"
+            class="checkReposicao"
+            data-codigo="${item.codigo ?? ""}"
+            data-descricao="${item.descricao ?? ""}"
+            data-saldo="${saldo}"
+          >
 
-            <td>
+        </td>
 
+        <td>${item.codigo ?? "-"}</td>
 
-                <input
+        <td>${item.descricao ?? "-"}</td>
 
-                    type="checkbox"
+        <td>${saldo}</td>
 
-                    class="checkReposicao"
+        <td>
 
-                    data-codigo="${item.codigo ?? ""}"
+          <span class="status-reposicao ${statusClasse}">
+            ${statusTexto}
+          </span>
 
-                    data-descricao="${item.descricao ?? ""}"
+        </td>
 
-                    data-saldo="${saldo}"
+      </tr>
 
-                >
-
-
-            </td>
-
-
-
-            <td>
-
-                ${item.codigo ?? "-"}
-
-            </td>
-
-
-
-            <td>
-
-                ${item.descricao ?? "-"}
-
-            </td>
-
-
-
-            <td>
-
-                ${saldo}
-
-            </td>
-
-
-
-            <td>
-
-                5
-
-            </td>
-
-
-
-            <td>
-
-
-                <span class="status-reposicao ${statusClasse}">
-
-                    ${statusTexto}
-
-                </span>
-
-
-            </td>
-
-
-        </tr>
-
-
-        `;
+    `;
   });
 
   tbody.innerHTML = html;
@@ -164,53 +107,31 @@ function renderReposicao(dados) {
   atualizarContadorReposicao();
 }
 
-/**
- * ============================================================
- * CARREGA CACHE
- * ============================================================
- */
-
 function atualizarTabelaReposicao() {
   const dados = DashboardStore.get("reposicao");
 
-  if (Array.isArray(dados)) {
-    renderReposicao(dados);
-  } else {
-    console.warn("⚠️ Reposição não encontrada no cache");
-  }
+  renderReposicao(dados);
 }
 
-/**
- * ============================================================
- * CONTADOR
- * ============================================================
- */
-
 function atualizarContadorReposicao() {
-  const selecionados = document.querySelectorAll(
-    ".checkReposicao:checked",
-  ).length;
-
   const contador = document.getElementById("contadorReposicao");
 
   if (!contador) return;
 
-  if (selecionados === 0) {
-    contador.textContent = "Nenhum item selecionado";
-  } else {
-    contador.textContent = `${selecionados} item(ns) selecionado(s)`;
-  }
+  const selecionados = document.querySelectorAll(
+    ".checkReposicao:checked",
+  ).length;
+
+  contador.textContent =
+    selecionados === 0
+      ? "Nenhum item selecionado"
+      : `${selecionados} item(ns) selecionado(s)`;
 }
 
-/**
- * ============================================================
- * CHECKBOX INDIVIDUAL
- * ============================================================
- */
-
 document.addEventListener("change", function (e) {
-  if (e.target.classList.contains("checkReposicao")) {
-    atualizarContadorReposicao();
+  if (!e.target.classList.contains("checkReposicao")) {
+    return;
   }
-});
 
+  atualizarContadorReposicao();
+});

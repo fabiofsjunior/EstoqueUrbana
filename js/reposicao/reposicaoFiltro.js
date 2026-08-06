@@ -5,67 +5,71 @@
  *
  * Responsável por:
  *
- * - Filtrar peças exibidas na tabela
- * - Buscar por código ou descrição
- *
- * Não realiza:
- *
- * - Renderização da tabela
- * - Controle de checkbox
- * - Seleção de itens
- * - Geração de PDF
+ * - Filtrar por texto
+ * - Filtrar por status
  *
  * ============================================================
  */
 
-/**
- * ============================================================
- * FILTRO DINÂMICO
- * ============================================================
- */
+document.addEventListener("DOMContentLoaded", () => {
+  const filtroTexto = document.getElementById("filtroReposicao");
+  const filtroStatus = document.getElementById("statusReposicao");
 
-document.addEventListener("input", function (e) {
-  if (e.target.id !== "filtroReposicao") {
-    return;
+  function aplicarFiltroReposicao() {
+    const texto = (filtroTexto?.value || "").toLowerCase().trim();
+
+    const status = (filtroStatus?.value || "").toLowerCase();
+
+    const linhas = document.querySelectorAll("#reposicao-body tr");
+
+    linhas.forEach((linha) => {
+      const codigo = linha.cells[1]?.textContent.toLowerCase() || "";
+      const descricao = linha.cells[2]?.textContent.toLowerCase() || "";
+      const statusLinha = linha.cells[4]?.textContent.toLowerCase() || "";
+
+      const passaTexto = codigo.includes(texto) || descricao.includes(texto);
+
+      let passaStatus = true;
+
+      if (status !== "") {
+        if (status === "zerado") {
+          passaStatus = statusLinha.includes("zerado");
+        }
+
+        if (status === "baixo") {
+          passaStatus = statusLinha.includes("baixo");
+        }
+
+        if (status === "normal") {
+          passaStatus = statusLinha.includes("normal");
+        }
+      }
+
+      linha.style.display = passaTexto && passaStatus ? "" : "none";
+    });
   }
 
-  const termo = e.target.value.toLowerCase().trim();
+  filtroTexto?.addEventListener("input", aplicarFiltroReposicao);
 
-  const linhas = document.querySelectorAll("#reposicao-body tr");
-
-  linhas.forEach((linha) => {
-    const textoLinha = linha.textContent.toLowerCase();
-
-    if (textoLinha.includes(termo)) {
-      linha.style.display = "";
-    } else {
-      linha.style.display = "none";
-    }
-  });
+  filtroStatus?.addEventListener("change", aplicarFiltroReposicao);
 });
 
 /**
  * ============================================================
  * LIMPAR FILTRO
  * ============================================================
- *
- * Caso queira limpar via botão futuramente
- *
- * ============================================================
  */
 
 function limparFiltroReposicao() {
-  const campo = document.getElementById("filtroReposicao");
+  const filtroTexto = document.getElementById("filtroReposicao");
 
-  if (!campo) {
-    return;
-  }
+  const filtroStatus = document.getElementById("statusReposicao");
 
-  campo.value = "";
+  if (filtroTexto) filtroTexto.value = "";
 
-  const linhas = document.querySelectorAll("#reposicao-body tr");
+  if (filtroStatus) filtroStatus.value = "";
 
-  linhas.forEach((linha) => {
-    linha.style.display = "";
-  });
+  document
+    .querySelectorAll("#reposicao-body tr")
+    .forEach((linha) => (linha.style.display = ""));
 }
