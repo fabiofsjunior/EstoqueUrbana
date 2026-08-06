@@ -331,27 +331,47 @@
       </div>
     </details>
 
-    <!-- 📦 Solicitação de Reposição -->
+    <!-- 📦 Estoque Crítico e Reposição de Peças -->
     <details class="accordion">
       <summary>📦 Estoque Crítico e Reposição de Peças</summary>
 
       <div class="accordion-content">
         <section class="box">
-          <div class="acoes-reposicao">
+          <!-- ==========================================
+           FILTRO
+      =========================================== -->
+
+          <div class="acoes-retorno">
             <input
               id="filtroReposicao"
               type="text"
               placeholder="🔎 Buscar peça..."
             />
-
-            <button id="btnSelecionarTodos" class="btn-pdf">
-              ☑ Selecionar todos
-            </button>
-
-            <button id="btnPdfReposicao" class="btn-pdf">
-              📄 Imprimir PDF
-            </button>
           </div>
+
+          <!-- ==========================================
+           AÇÕES
+      =========================================== -->
+
+          <div class="toolbar-retorno">
+            <button id="btnSelecionarTodos" class="btn-pdf" type="button">
+              ☐ Selecionar Todos
+            </button>
+
+            <span id="contadorReposicao" class="contador-retornos">
+              Nenhum item selecionado
+            </span>
+
+            <div class="acoes-direita">
+              <button id="btnPdfReposicao" class="btn-pdf" type="button">
+                📄 Imprimir PDF
+              </button>
+            </div>
+          </div>
+
+          <!-- ==========================================
+           TABELA ESTOQUE
+      =========================================== -->
 
           <div class="scroll-movimentacoes">
             <table>
@@ -363,7 +383,9 @@
 
                   <th>Descrição</th>
 
-                  <th>Saldo</th>
+                  <th>Saldo Atual</th>
+
+                  <th>Quantidade Solicitar</th>
 
                   <th>Status</th>
                 </tr>
@@ -518,6 +540,34 @@
       </div>
     </div>
 
+    <!-- =====================================================
+     MODAL AJUSTE QUANTIDADE REPOSIÇÃO
+===================================================== -->
+
+    <div id="modalReposicao" class="modal-retorno">
+      <div class="modal-retorno-conteudo">
+        <div class="modal-retorno-header">
+          <h3>📦 Ajustar Quantidade de Reposição</h3>
+
+          <button id="fecharModalReposicao" class="btn-fechar-modal">✖</button>
+        </div>
+
+        <div class="modal-retorno-body">
+          <div id="listaQuantidadeReposicao"></div>
+        </div>
+
+        <div class="modal-retorno-footer">
+          <button id="cancelarModalReposicao" class="btn-cancelar">
+            Cancelar
+          </button>
+
+          <button id="confirmarModalReposicao" class="btn-confirmar">
+            📄 Gerar PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- CORE -->
     <script src="js/core/api.js"></script>
     <!-- STATE -->
@@ -548,7 +598,9 @@
 
     <!-- REPOSIÇÃO -->
     <script src="js/reposicao/reposicao.js"></script>
+    <script src="js/reposicao/reposicaoSelecao.js"></script>
     <script src="js/reposicao/reposicaoFiltro.js"></script>
+    <script src="js/reposicao/reposicaoModal.js"></script>
     <script src="js/reposicao/reposicaoPdf.js"></script>
 
     <!-- RETORNOS -->

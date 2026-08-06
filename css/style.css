@@ -3,21 +3,48 @@
 @import url("./accordion.css");
 @import url("./componentes.css");
 
+/* ===================================================
+   RESET GLOBAL
+=================================================== */
+
 * {
   margin: 0;
+
   padding: 0;
+
   box-sizing: border-box;
+
   font-family: "Segoe UI", sans-serif;
 }
 
 body {
   background: #f4f6f9;
+
   padding: 20px;
 }
 
 /* ===================================================
-   STATUS RETORNOS - CORES DAS LINHAS
+   STATUS GERAIS DE TABELAS
+   (COMPARTILHADO ENTRE RETORNOS E REPOSIÇÃO)
 =================================================== */
+
+.status-retorno {
+  padding: 5px 10px;
+
+  border-radius: 12px;
+
+  font-weight: bold;
+
+  font-size: 12px;
+
+  display: inline-block;
+}
+
+/* ===================================================
+   RETORNO DE COMPONENTES
+=================================================== */
+
+/* Linhas */
 
 .linha-pendente {
   background-color: rgba(220, 53, 69, 0.12);
@@ -31,8 +58,6 @@ body {
   background-color: rgba(40, 167, 69, 0.12);
 }
 
-/* melhora leitura */
-
 #retorno-body tr {
   transition: background-color 0.2s ease;
 }
@@ -41,9 +66,9 @@ body {
   filter: brightness(0.96);
 }
 
-/* =====================================================
+/* ===================================================
    MODAL EDITAR RETORNO
-===================================================== */
+=================================================== */
 
 .modal-retorno {
   display: none;
@@ -67,8 +92,6 @@ body {
   align-items: center;
 }
 
-/* Caixa principal */
-
 .modal-retorno-conteudo {
   background: white;
 
@@ -82,8 +105,6 @@ body {
 
   padding: 20px;
 }
-
-/* Cabeçalho */
 
 .modal-retorno-header {
   display: flex;
@@ -101,8 +122,6 @@ body {
   margin: 0;
 }
 
-/* Botão fechar */
-
 .btn-fechar-modal {
   border: none;
 
@@ -112,8 +131,6 @@ body {
 
   font-size: 18px;
 }
-
-/* Corpo */
 
 .modal-retorno-body {
   display: flex;
@@ -137,7 +154,27 @@ body {
   border: 1px solid #ccc;
 }
 
-/* Rodapé */
+.modal-retorno-body input[readonly] {
+  background: #e9ecef;
+
+  color: #555;
+
+  cursor: not-allowed;
+}
+
+.modal-retorno-body input:not([readonly]) {
+  background: white;
+
+  border-color: #198754;
+}
+
+.modal-retorno-body input:not([readonly]):focus {
+  outline: none;
+
+  border-color: #0d6efd;
+
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+}
 
 .modal-retorno-footer {
   display: flex;
@@ -175,40 +212,9 @@ body {
   cursor: pointer;
 }
 
-/* =====================================================
-   CAMPOS SOMENTE LEITURA - MODAL RETORNO
-===================================================== */
-
-.modal-retorno-body input[readonly] {
-  background-color: #e9ecef;
-
-  color: #555;
-
-  cursor: not-allowed;
-
-  border-color: #ccc;
-}
-
-/* Campo editável */
-
-.modal-retorno-body input:not([readonly]) {
-  background-color: #ffffff;
-
-  border-color: #198754;
-}
-
-/* Destaque quando usuário clicar */
-
-.modal-retorno-body input:not([readonly]):focus {
-  outline: none;
-
-  border-color: #0d6efd;
-
-  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
-}
-/* ==========================================================
-   LOADING BOTÃO RETORNO
-   ========================================================== */
+/* ===================================================
+   LOADING RETORNOS
+=================================================== */
 
 .spinnerRetorno {
   display: inline-block;
@@ -221,7 +227,7 @@ body {
 
   border: 2px solid rgba(255, 255, 255, 0.5);
 
-  border-top-color: #ffffff;
+  border-top-color: white;
 
   border-radius: 50%;
 
@@ -238,4 +244,211 @@ body {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* ===================================================
+   ESTOQUE CRÍTICO / REPOSIÇÃO
+=================================================== */
+
+.linha-zerado {
+  background: rgba(220, 53, 69, 0.12);
+}
+
+.linha-critico {
+  background: rgba(255, 193, 7, 0.15);
+}
+
+.linha-normal {
+  background: rgba(40, 167, 69, 0.12);
+}
+
+/* Hover reposição */
+
+#reposicao-body tr {
+  transition: background-color 0.2s ease;
+}
+
+#reposicao-body tr:hover {
+  filter: brightness(0.96);
+}
+
+/* Status reposição */
+
+.status-zerado {
+  background: rgba(220, 53, 69, 0.18);
+
+  color: #b30000;
+}
+
+.status-critico {
+  background: rgba(255, 193, 7, 0.25);
+
+  color: #856404;
+}
+
+.status-normal {
+  background: rgba(40, 167, 69, 0.18);
+
+  color: #155724;
+}
+/* =====================================================
+   MODAL REPOSIÇÃO
+===================================================== */
+
+#modalReposicao {
+  display: none;
+
+  position: fixed;
+
+  z-index: 9999;
+
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.45);
+
+  justify-content: center;
+
+  align-items: center;
+}
+
+/* CAIXA PRINCIPAL */
+
+#modalReposicao .modal-retorno-conteudo {
+  background: white;
+
+  width: 700px;
+
+  max-width: 90%;
+
+  max-height: 85vh;
+
+  border-radius: 12px;
+
+  padding: 20px;
+
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+
+  display: flex;
+
+  flex-direction: column;
+}
+
+/* =====================================================
+   LISTA DE PEÇAS
+===================================================== */
+
+#modalReposicao .modal-retorno-body {
+  overflow-y: auto;
+
+  max-height: 55vh;
+
+  padding-right: 8px;
+}
+
+/* BARRA DE ROLAGEM */
+
+#modalReposicao .modal-retorno-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+#modalReposicao .modal-retorno-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+
+  border-radius: 10px;
+}
+
+#modalReposicao .modal-retorno-body::-webkit-scrollbar-thumb {
+  background: #999;
+
+  border-radius: 10px;
+}
+
+#modalReposicao .modal-retorno-body::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+/* =====================================================
+   ITEM DA LISTA
+===================================================== */
+
+.item-modal-reposicao {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 20px;
+
+  padding: 12px;
+
+  margin-bottom: 8px;
+
+  background: #f8f9fa;
+
+  border-radius: 8px;
+
+  border-bottom: 1px solid #ddd;
+}
+
+/* INFORMAÇÕES DA PEÇA */
+
+.dados-reposicao {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+
+  font-size: 14px;
+
+  flex: 1;
+}
+
+.dados-reposicao span {
+  font-weight: 400;
+}
+
+/* =====================================================
+   CAMPO QUANTIDADE
+===================================================== */
+
+.campo-quantidade {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 5px;
+
+  font-size: 13px;
+}
+
+.quantidadeReposicao {
+  width: 75px;
+
+  padding: 6px;
+
+  border-radius: 6px;
+
+  border: 1px solid #ccc;
+
+  text-align: center;
+}
+
+/* =====================================================
+   RODAPÉ FIXO
+===================================================== */
+
+#modalReposicao .modal-retorno-footer {
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  margin-top: 20px;
+
+  flex-shrink: 0;
 }
