@@ -1,0 +1,46 @@
+table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:clamp(10px,1vw,16px);
+}
+
+table th{
+    background:#005bbb;
+    color:#fff;
+    padding:10px;
+    text-align:center;
+}
+
+table td{
+    padding:5px;
+    border-bottom:1px solid #ddd;
+    text-align:center;
+}
+
+tbody tr:hover{
+    background:#f5f5f5;
+}
+
+.scroll-movimentacoes{
+    width:100%;
+    max-height:420px;
+    overflow:auto;
+}
+
+.scroll-movimentacoes table{
+    min-width:650px;
+}
+
+.scroll-movimentacoes thead th{
+    position:sticky;
+    top:0;
+    z-index:2;
+}
+
+@media(max-width:600px){
+
+.scroll-movimentacoes table{
+min-width:600px;
+}
+
+}

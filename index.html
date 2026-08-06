@@ -331,27 +331,53 @@
       </div>
     </details>
 
-    <!-- 📦 Solicitação de Reposição -->
+    <!-- 📦 Estoque Crítico e Reposição de Peças -->
     <details class="accordion">
       <summary>📦 Estoque Crítico e Reposição de Peças</summary>
 
       <div class="accordion-content">
         <section class="box">
-          <div class="acoes-reposicao">
+          <!-- ==========================================
+           FILTRO
+      =========================================== -->
+
+          <div class="acoes-retorno">
             <input
               id="filtroReposicao"
               type="text"
               placeholder="🔎 Buscar peça..."
             />
-
-            <button id="btnSelecionarTodos" class="btn-pdf">
-              ☑ Selecionar todos
-            </button>
-
-            <button id="btnPdfReposicao" class="btn-pdf">
-              📄 Imprimir PDF
-            </button>
+            <select id="statusReposicao">
+              <option value="">Todos os status</option>
+              <option value="zerado">🔴 Zerado</option>
+              <option value="baixo">🟡 Estoque Baixo</option>
+              <option value="normal">🟢 Estoque Normal</option>
+            </select>
           </div>
+
+          <!-- ==========================================
+           AÇÕES
+      =========================================== -->
+
+          <div class="toolbar-retorno">
+            <button id="btnSelecionarTodos" class="btn-pdf" type="button">
+              ☐ Selecionar Todos
+            </button>
+
+            <span id="contadorReposicao" class="contador-retornos">
+              Nenhum item selecionado
+            </span>
+
+            <div class="acoes-direita">
+              <button id="btnPdfReposicao" class="btn-pdf" type="button">
+                📄 Imprimir PDF
+              </button>
+            </div>
+          </div>
+
+          <!-- ==========================================
+           TABELA ESTOQUE
+      =========================================== -->
 
           <div class="scroll-movimentacoes">
             <table>
@@ -363,7 +389,7 @@
 
                   <th>Descrição</th>
 
-                  <th>Saldo</th>
+                  <th>Saldo Atual</th>
 
                   <th>Status</th>
                 </tr>
@@ -382,6 +408,10 @@
 
       <div class="accordion-content">
         <section class="box">
+          <!-- ===========================
+                 LINHA 1 - FILTROS
+            ============================ -->
+
           <div class="acoes-retorno">
             <input
               id="filtroRetorno"
@@ -391,37 +421,51 @@
 
             <select id="filtroLaboratorio">
               <option value="">🏢 Todos os Laboratórios</option>
-
               <option value="FILIAL">FILIAL</option>
-
               <option value="MATRIZ">MATRIZ</option>
             </select>
 
             <select id="filtroStatus">
               <option value="">Todos os Status</option>
-
               <option value="PENDENTE">🟥 Pendente</option>
-
               <option value="SEPARADO PARA ENVIO">
                 🟨 Separado para Envio
               </option>
-
               <option value="FINALIZADO">🟩 Finalizado</option>
             </select>
+          </div>
 
+          <!-- ===========================
+                 LINHA 2 - AÇÕES
+            ============================ -->
+
+          <div class="toolbar-retorno">
             <button id="btnSelecionarTodosRetorno" class="btn-pdf">
               ☑ Selecionar Todos
             </button>
 
-            <button id="btnPdfRetorno" class="btn-pdf">📄 Imprimir PDF</button>
-            <button
-              id="btnDuplicarRetorno"
-              class="btn-pdf"
-              style="display: none"
-            >
-              📑 Duplicar Chamado
-            </button>
+            <span id="contadorRetornos" class="contador-retornos">
+              Nenhum item selecionado
+            </span>
+
+            <div class="acoes-direita">
+              <button id="btnPdfRetorno" class="btn-pdf">
+                📄 Imprimir PDF
+              </button>
+
+              <button
+                id="btnDuplicarRetorno"
+                class="btn-pdf"
+                style="display: none"
+              >
+                📑 Duplicar Chamado
+              </button>
+            </div>
           </div>
+
+          <!-- ===========================
+                 TABELA
+            ============================ -->
 
           <div class="scroll-movimentacoes">
             <table>
@@ -452,7 +496,226 @@
       </div>
     </details>
 
-    <script src="js/api.js"></script>
-    <script src="js/dashboard.js"></script>
+    <!-- =====================================================
+     MODAL EDITAR RETORNO
+===================================================== -->
+
+    <div id="modalEditarRetorno" class="modal-retorno">
+      <div class="modal-retorno-conteudo">
+        <div class="modal-retorno-header">
+          <h3>✏️ Editar Retorno</h3>
+
+          <button id="fecharModalRetorno" class="btn-fechar-modal">✖</button>
+        </div>
+
+        <div class="modal-retorno-body">
+          <input type="hidden" id="retornoLinha" />
+
+          <label> Chamado Principal </label>
+
+          <input id="retornoChamadoPrincipal" readonly />
+
+          <label> Chamado Laboratório </label>
+
+          <input id="retornoChamadoLaboratorio" placeholder="#0726-000000" />
+
+          <label> ATM </label>
+
+          <input id="retornoATM" readonly />
+
+          <label> Peça </label>
+
+          <input id="retornoPeca" readonly />
+
+          <label> Laboratório </label>
+
+          <input id="retornoLaboratorio" readonly />
+        </div>
+
+        <div class="modal-retorno-footer">
+          <button id="cancelarEdicaoRetorno" class="btn-cancelar">
+            Cancelar
+          </button>
+
+          <button id="salvarEdicaoRetorno" class="btn-confirmar">
+            💾 Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+     MODAL AJUSTE QUANTIDADE REPOSIÇÃO
+===================================================== -->
+
+    <div id="modalReposicao" class="modal-retorno">
+      <div class="modal-retorno-conteudo">
+        <div class="modal-retorno-header">
+          <h3>📦 Ajustar Quantidade de Reposição</h3>
+
+          <button id="fecharModalReposicao" class="btn-fechar-modal">✖</button>
+        </div>
+
+        <div class="modal-retorno-body">
+          <div id="listaQuantidadeReposicao"></div>
+        </div>
+
+        <div class="modal-retorno-footer">
+          <button id="cancelarModalReposicao" class="btn-cancelar">
+            Cancelar
+          </button>
+
+          <button id="confirmarModalReposicao" class="btn-confirmar">
+            📄 Gerar PDF
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- =====================================================
+     MODAL FINALIZAR RETORNO DE COMPONENTES
+===================================================== -->
+
+    <div id="modalFinalizarRetorno">
+      <div class="modal-finalizar-retorno-container">
+        <!-- CABEÇALHO -->
+
+        <div class="modal-finalizar-retorno-header">
+          <h3>✅ Finalizar Retorno</h3>
+
+          <button
+            id="btnFecharFinalizar"
+            class="btn-fechar-finalizar"
+            title="Fechar"
+          >
+            ✖
+          </button>
+        </div>
+
+        <!-- CONTEÚDO -->
+
+        <div class="modal-finalizar-retorno-body">
+          <!-- CHAMADO PRINCIPAL -->
+
+          <div class="campo">
+            <label> Chamado Principal </label>
+
+            <input id="finalizarChamadoPai" type="text" readonly />
+          </div>
+
+          <!-- CHAMADO LABORATÓRIO -->
+
+          <div class="campo">
+            <label> Chamado Laboratório </label>
+
+            <input id="finalizarChamadoFilho" type="text" readonly />
+          </div>
+
+          <!-- LABORATÓRIO -->
+
+          <div class="campo">
+            <label> Laboratório </label>
+
+            <input id="finalizarLaboratorio" type="text" readonly />
+          </div>
+
+          <!-- ATM -->
+
+          <div class="campo">
+            <label> ATM </label>
+
+            <input id="finalizarATM" type="text" readonly />
+          </div>
+
+          <!-- PEÇA -->
+
+          <div class="campo campo-observacao">
+            <label> Peça </label>
+
+            <input id="finalizarPeca" type="text" readonly />
+          </div>
+
+          <!-- STATUS -->
+
+          <div class="campo">
+            <label> Status Atual </label>
+
+            <input id="finalizarStatus" type="text" readonly />
+          </div>
+
+          <!-- OBSERVAÇÃO -->
+
+          <div class="campo campo-observacao">
+            <label> Observação </label>
+
+            <textarea
+              id="finalizarObservacao"
+              placeholder="Informe uma observação..."
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- RODAPÉ -->
+
+        <div class="modal-finalizar-retorno-footer">
+          <button id="btnCancelarFinalizar" class="btn-cancelar-finalizar">
+            Cancelar
+          </button>
+
+          <button id="btnConfirmarFinalizar" class="btn-confirmar-finalizar">
+            ✅ Finalizar Chamado
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- CORE -->
+    <script src="js/core/api.js"></script>
+    <!-- STATE -->
+    <script src="js/state/store.js"></script>
+    <!-- SERVICES -->
+    <script src="js/services/dashboardService.js"></script>
+    <script src="js/services/reposicaoService.js"></script>
+
+    <!-- UTILS -->
+    <script src="js/utils/dom.js"></script>
+    <script src="js/utils/datas.js"></script>
+    <script src="js/utils/formatadores.js"></script>
+    <script src="js/utils/helpers.js"></script>
+    <script src="js/utils/print.js"></script>
+    <script src="js/utils/renderTabela.js"></script>
+    <script src="js/utils/validacoes.js"></script>
+
+    <!-- DASHBOARD -->
+    <script src="js/dashboard/indicadores.js"></script>
+    <script src="js/dashboard/topATM.js"></script>
+    <script src="js/dashboard/topPecas.js"></script>
+    <script src="js/dashboard/consumo.js"></script>
+    <script src="js/dashboard/motivos.js"></script>
+    <script src="js/dashboard/reparoLocal.js"></script>
+    <script src="js/dashboard/bancada.js"></script>
+    <script src="js/dashboard/vandalismo.js"></script>
+    <script src="js/dashboard/ultimas.js"></script>
+
+    <!-- REPOSIÇÃO -->
+    <script src="js/reposicao/reposicao.js"></script>
+    <script src="js/reposicao/reposicaoSelecao.js"></script>
+    <script src="js/reposicao/reposicaoFiltro.js"></script>
+    <script src="js/reposicao/reposicaoModal.js"></script>
+    <script src="js/reposicao/reposicaoPdf.js"></script>
+
+    <!-- RETORNOS -->
+    <script src="js/retornos/retornoRender.js"></script>
+    <script src="js/retornos/retornos.js"></script>
+    <script src="js/retornos/retornoFiltro.js"></script>
+    <script src="js/retornos/retornoPdf.js"></script>
+    <script src="js/retornos/retornoChamado.js"></script>
+    <script src="js/retornos/retornoFinalizar.js"></script>
+    <script src="js/retornos/retornoSelecao.js"></script>
+    <script src="js/retornos/retornoDuplicar.js"></script>
+
+    <!-- LOADER -->
+    <script src="js/core/dashboardLoader.js"></script>
+
+    <!-- APP -->
+    <script src="js/app.js"></script>
   </body>
 </html>
