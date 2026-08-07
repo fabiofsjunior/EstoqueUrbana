@@ -250,75 +250,67 @@
       <summary>🚨 Ocorrências do Mês</summary>
 
       <div class="accordion-content">
-        <section>
-          <div class="cards-listagem">
-            <!-- ==============================
-             REPAROS EM BANCADA
-        =============================== -->
+        <!-- ==============================
+         REPAROS EM BANCADA
+    =============================== -->
+        <section class="box">
+          <h3>🔧 Reparos em Bancada</h3>
 
-            <section class="box">
-              <h3>🔧 Reparos em Bancada</h3>
+          <div class="toolbar">
+            <button id="btnPdfBancada" class="btn-pdf">📄 Imprimir PDF</button>
+          </div>
 
-              <div class="toolbar">
-                <button id="btnPdfBancada" class="btn-pdf">
-                  📄 Imprimir PDF
-                </button>
-              </div>
+          <div class="scroll-movimentacoes">
+            <table>
+              <thead>
+                <tr>
+                  <th>Chamado</th>
+                  <th>ATM</th>
+                  <th>Peça</th>
+                  <th>Destino</th>
+                  <th>Data</th>
+                </tr>
+              </thead>
 
-              <div class="scroll-movimentacoes">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Chamado</th>
-                      <th>ATM</th>
-                      <th>Peça</th>
-                      <th>Destino</th>
-                      <th>Data</th>
-                    </tr>
-                  </thead>
+              <tbody id="bancada-body">
+                <tr>
+                  <td colspan="5">Carregando...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
 
-                  <tbody id="bancada-body">
-                    <tr>
-                      <td colspan="5">Carregando...</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </section>
+        <!-- ==============================
+         VANDALISMOS
+    =============================== -->
+        <section class="box">
+          <h3>🚨 Vandalismos do Mês</h3>
 
-            <!-- ==============================
-             VANDALISMOS
-        =============================== -->
+          <div class="toolbar">
+            <button id="btnPdfVandalismo" class="btn-pdf">
+              📄 Imprimir PDF
+            </button>
+          </div>
 
-            <section class="box">
-              <h3>🚨 Vandalismos do Mês</h3>
+          <div class="scroll-movimentacoes">
+            <table>
+              <thead>
+                <tr>
+                  <th>Chamado</th>
+                  <th>ATM</th>
+                  <th>Peça</th>
+                  <th>Destino</th>
+                  <th>Data</th>
+                </tr>
+              </thead>
 
-              <div class="toolbar">
-                <button id="btnPdfVandalismo" class="btn-pdf">
-                  📄 Imprimir PDF
-                </button>
-              </div>
-
-              <div class="scroll-movimentacoes">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Chamado</th>
-                      <th>ATM</th>
-                      <th>Peça</th>
-                      <th>Destino</th>
-                      <th>Data</th>
-                    </tr>
-                  </thead>
-
-                  <tbody id="vandalismo-body">
-                    <tr>
-                      <td colspan="5">Carregando...</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </section>
+              <tbody id="vandalismo-body">
+                <tr>
+                  <td colspan="5">Carregando...</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </section>
       </div>
