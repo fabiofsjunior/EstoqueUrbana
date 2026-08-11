@@ -895,3 +895,11 @@ body {
     width: 95%;
   }
 }
+
+.etiqueta-frente {
+    background-image: url("./assets/etiquetas/etiqueta_frente.png");
+}
+
+.etiqueta-verso {
+    background-image: url("./assets/etiquetas/etiqueta_verso.png");
+}
