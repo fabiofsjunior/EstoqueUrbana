@@ -39,7 +39,17 @@ async function carregarBancada(){
 
 
 }
+//// BOtão imprimir
+document.addEventListener("DOMContentLoaded", () => {
 
+    const btnPdfBancada =
+        document.getElementById("btnPdfBancada");
+
+    if (btnPdfBancada) {
+        btnPdfBancada.addEventListener("click", imprimirBancada);
+    }
+
+});
 
 
 
