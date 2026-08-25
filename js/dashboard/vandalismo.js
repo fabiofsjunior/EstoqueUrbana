@@ -5,6 +5,20 @@
  * Nenhuma chamada API é feita aqui.
  */
 
+//// Botão vandalismo
+document.addEventListener("DOMContentLoaded", () => {
+
+    const btnPdfVandalismo =
+        document.getElementById("btnPdfVandalismo");
+
+    if (btnPdfVandalismo) {
+        btnPdfVandalismo.addEventListener(
+            "click",
+            imprimirVandalismo
+        );
+    }
+
+});
 
 async function carregarVandalismo(){
 
