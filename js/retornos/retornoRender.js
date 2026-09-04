@@ -2,368 +2,130 @@
  * ============================================================
  * RENDERIZAÇÃO DOS RETORNOS
  * ============================================================
- *
- * Responsável por:
- *
- * - Renderizar tabela de retorno de componentes
- * - Aplicar cores por status
- * - Criar ações conforme status
- * - Preparar dados para finalização
- *
- * Fonte:
- * DashboardStore
- *
- * NÃO realiza chamadas API.
- *
- * ============================================================
- */
-
-/**
- * ============================================================
- * NORMALIZA STATUS
- * ============================================================
- */
-
-function normalizarStatus(status) {
-  const texto = String(status || "")
-    .trim()
-    .toUpperCase();
-
-  if (texto.startsWith("PEND")) {
-    return "PENDENTE";
-  }
-
-  if (texto.includes("SEPARADO") || texto.includes("ENVIO")) {
-    return "SEPARADO PARA ENVIO";
-  }
-
-  if (texto.startsWith("FINAL") || texto.includes("FINALZD")) {
-    return "FINALIZADO";
-  }
-
-  return "PENDENTE";
-}
-
-/**
- * ============================================================
- * STATUS VISUAL
- * ============================================================
  */
 
 function obterStatusRetorno(status) {
   switch (normalizarStatus(status)) {
     case "PENDENTE":
-      return {
-        classeLinha: "linha-pendente",
-
-        classeStatus: "status-pendente",
-
-        icone: "🟥",
-
-        texto: "PENDENTE",
-      };
-
+      return { classeLinha: "linha-pendente", classeStatus: "status-pendente", icone: "🟥", texto: "PENDENTE" };
     case "SEPARADO PARA ENVIO":
-      return {
-        classeLinha: "linha-envio",
-
-        classeStatus: "status-envio",
-
-        icone: "🟨",
-
-        texto: "SEPARADO PARA ENVIO",
-      };
-
+      return { classeLinha: "linha-envio", classeStatus: "status-envio", icone: "🟨", texto: "SEPARADO PARA ENVIO" };
     case "FINALIZADO":
-      return {
-        classeLinha: "linha-finalizado",
-
-        classeStatus: "status-finalizado",
-
-        icone: "🟩",
-
-        texto: "FINALIZADO",
-      };
+      return { classeLinha: "linha-finalizado", classeStatus: "status-finalizado", icone: "🟩", texto: "FINALIZADO" };
+    default:
+      return { classeLinha: "linha-pendente", classeStatus: "status-pendente", icone: "🟥", texto: "PENDENTE" };
   }
 }
-
-/**
- * ============================================================
- * AÇÃO POR STATUS
- * ============================================================
- */
 
 function obterAcaoRetorno(status) {
   switch (normalizarStatus(status)) {
     case "PENDENTE":
-      return {
-        icone: "✏️",
-
-        texto: "Editar",
-
-        classe: "btn-editar-retorno",
-
-        tipo: "editar",
-      };
-
+      return { icone: "✏️", texto: "Editar", classe: "btn-editar-retorno", tipo: "editar" };
     case "SEPARADO PARA ENVIO":
-      return {
-        icone: "✅",
-
-        texto: "Finalizar",
-
-        classe: "btn-finalizar-retorno",
-
-        tipo: "finalizar",
-      };
-
-    case "FINALIZADO":
-      return {
-        icone: "🔒",
-
-        texto: "Finalizado",
-
-        classe: "btn-finalizado-retorno",
-
-        tipo: "bloqueado",
-      };
+      return { icone: "✅", texto: "Finalizar", classe: "btn-finalizar-retorno", tipo: "finalizar" };
+    default:
+      return { icone: "🔒", texto: "Finalizado", classe: "btn-finalizado-retorno", tipo: "bloqueado" };
   }
 }
 
-/**
- * ============================================================
- * RENDER TABELA
- * ============================================================
- */
+function criarBotaoAcaoRetorno(item, acao) {
+  const botao = document.createElement("button");
+  botao.type = "button";
+  botao.className = `btn-acao-retorno ${acao.classe}`;
+  botao.title = acao.texto;
+  botao.textContent = acao.icone;
+  botao.dataset.acao = acao.tipo;
+  botao.dataset.linha = String(item.linha ?? "");
+  botao.disabled = acao.tipo === "bloqueado";
+  return botao;
+}
 
 function renderTabelaRetornos(dados) {
   const tbody = document.getElementById("retorno-body");
+  if (!tbody) return;
 
-  if (!tbody) {
-    console.warn("⚠️ retorno-body não encontrado");
-
-    return;
-  }
-
-  tbody.innerHTML = "";
+  tbody.replaceChildren();
 
   if (!Array.isArray(dados) || dados.length === 0) {
-    tbody.innerHTML = `
-
-      <tr>
-        <td colspan="8">
-          Nenhum retorno encontrado.
-        </td>
-      </tr>
-
-    `;
-
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 8;
+    td.textContent = "Nenhum retorno encontrado.";
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+    if (typeof atualizarContadorRetornos === "function") atualizarContadorRetornos();
     return;
   }
 
-  const prioridade = {
-    PENDENTE: 1,
+  const prioridade = { PENDENTE: 1, "SEPARADO PARA ENVIO": 2, FINALIZADO: 3 };
+  const ordenados = [...dados].sort(
+    (a, b) =>
+      (prioridade[normalizarStatus(a.status)] ?? 99) -
+      (prioridade[normalizarStatus(b.status)] ?? 99),
+  );
 
-    "SEPARADO PARA ENVIO": 2,
-
-    FINALIZADO: 3,
-  };
-
-  dados.sort((a, b) => {
-    return (
-      prioridade[normalizarStatus(a.status)] -
-      prioridade[normalizarStatus(b.status)]
-    );
-  });
-
-  let html = "";
-
-  dados.forEach((item) => {
+  ordenados.forEach((item) => {
     const status = obterStatusRetorno(item.status);
-
     const acao = obterAcaoRetorno(item.status);
-
-    let botao = "";
-
-    if (acao.tipo === "finalizar") {
-      botao = `
-
-      <button
-
-        class="
-          btn-acao-retorno
-          ${acao.classe}
-        "
-
-
-        onclick='abrirModalFinalizarRetorno(${JSON.stringify(item)})'
-
-
-        title="${acao.texto}"
-
-      >
-
-        ${acao.icone}
-
-      </button>
-
-
-      `;
-    } else if (acao.tipo === "editar") {
-      botao = `
-
-      <button
-
-        class="
-          btn-acao-retorno
-          ${acao.classe}
-        "
-
-        onclick='editarRetorno("${item.linha}")'
-
-        title="${acao.texto}"
-
-      >
-
-        ${acao.icone}
-
-      </button>
-
-
-      `;
-    } else {
-      botao = `
-
-      <button
-
-        class="
-          btn-acao-retorno
-          ${acao.classe}
-        "
-
-        disabled
-
-        title="${acao.texto}"
-
-      >
-
-        ${acao.icone}
-
-      </button>
-
-      `;
-    }
-
-    html += `
-
-<tr class="
-  linha-retorno
-  ${status.classeLinha}
-">
-
-
-<td>
-
-<input
-
-type="checkbox"
-
-class="checkRetorno"
-
-
-data-linha="${item.linha ?? ""}"
-
-
-data-chamado-pai="${item.chamadoPai ?? ""}"
-
-
-data-chamado-filho="${item.chamadoFilho ?? ""}"
-
-
->
-
-</td>
-
-
-
-
-<td>
-${item.chamadoPai ?? "-"}
-</td>
-
-
-
-<td>
-${item.chamadoFilho ?? "-"}
-</td>
-
-
-
-<td>
-${item.peca ?? "-"}
-</td>
-
-
-
-<td>
-${item.laboratorio ?? "-"}
-</td>
-
-
-
-<td>
-${item.atm ?? "-"}
-</td>
-
-
-
-<td>
-
-<span class="
-status-retorno
-${status.classeStatus}
-">
-
-${status.icone}
-
-${status.texto}
-
-</span>
-
-</td>
-
-
-
-<td>
-
-${botao}
-
-</td>
-
-
-
-</tr>
-
-`;
+    const tr = document.createElement("tr");
+    tr.className = `linha-retorno ${status.classeLinha}`;
+
+    const checkboxTd = document.createElement("td");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.className = "checkRetorno";
+    checkbox.dataset.linha = String(item.linha ?? "");
+    checkbox.dataset.chamadoPai = String(item.chamadoPai ?? "");
+    checkbox.dataset.chamadoFilho = String(item.chamadoFilho ?? "");
+    checkboxTd.appendChild(checkbox);
+    tr.appendChild(checkboxTd);
+
+    [item.chamadoPai, item.chamadoFilho, item.peca, item.laboratorio, item.atm].forEach((valor) => {
+      const td = document.createElement("td");
+      td.textContent = valor == null || valor === "" ? "-" : String(valor);
+      tr.appendChild(td);
+    });
+
+    const statusTd = document.createElement("td");
+    const statusSpan = document.createElement("span");
+    statusSpan.className = `status-retorno ${status.classeStatus}`;
+    statusSpan.textContent = `${status.icone} ${status.texto}`;
+    statusTd.appendChild(statusSpan);
+    tr.appendChild(statusTd);
+
+    const acaoTd = document.createElement("td");
+    acaoTd.appendChild(criarBotaoAcaoRetorno(item, acao));
+    tr.appendChild(acaoTd);
+    tbody.appendChild(tr);
   });
 
-  tbody.innerHTML = html;
-
-  if (typeof atualizarContadorRetornos === "function") {
-    atualizarContadorRetornos();
-  }
+  if (typeof atualizarContadorRetornos === "function") atualizarContadorRetornos();
 }
 
-/**
- * ============================================================
- * ATUALIZAÇÃO MANUAL
- * ============================================================
- */
+function inicializarAcoesRetornoRender() {
+  const tbody = document.getElementById("retorno-body");
+  if (!tbody || tbody.dataset.acoesInicializadas === "true") return;
+
+  tbody.dataset.acoesInicializadas = "true";
+  tbody.addEventListener("click", (event) => {
+    const botao = event.target.closest("button[data-acao]");
+    if (!botao || botao.disabled) return;
+
+    const linha = botao.dataset.linha;
+    if (botao.dataset.acao === "editar" && typeof editarRetorno === "function") {
+      editarRetorno(linha);
+    }
+    if (botao.dataset.acao === "finalizar" && typeof abrirModalFinalizarRetorno === "function") {
+      const retornos = DashboardStore.get("retornos") || [];
+      const item = retornos.find((registro) => String(registro.linha) === String(linha));
+      if (item) abrirModalFinalizarRetorno(item);
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", inicializarAcoesRetornoRender);
 
 function atualizarTabelaRetornos() {
   const dados = DashboardStore.get("retornos");
-
-  if (Array.isArray(dados)) {
-    renderTabelaRetornos(dados);
-  }
+  if (Array.isArray(dados)) renderTabelaRetornos(dados);
 }
