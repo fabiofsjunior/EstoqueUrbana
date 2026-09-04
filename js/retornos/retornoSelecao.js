@@ -2,81 +2,52 @@
  * ==========================================================
  * SELEÇÃO DOS RETORNOS
  * ==========================================================
- *
- * Responsável por:
- *
- * ✔ Selecionar itens
- * ✔ Selecionar todos os itens visíveis
- * ✔ Atualizar contador
- * ✔ Exibir botão Duplicar
- * ✔ Preparar futuras ações em lote
- *
- * ==========================================================
  */
 
 let retornosSelecionados = [];
 
-/**
- * ==========================================================
- * Inicializa eventos
- * ==========================================================
- */
-
 function iniciarSelecaoRetorno() {
   const tbody = document.getElementById("retorno-body");
+  if (!tbody || tbody.dataset.selecaoInicializada === "true") return;
 
-  if (!tbody) return;
-
-  tbody.addEventListener("change", function (e) {
-    if (!e.target.classList.contains("checkRetorno")) {
-      return;
-    }
-
+  tbody.dataset.selecaoInicializada = "true";
+  tbody.addEventListener("change", (e) => {
+    if (!e.target?.classList?.contains("checkRetorno")) return;
     atualizarSelecaoRetorno();
   });
 
   const btnTodos = document.getElementById("btnSelecionarTodosRetorno");
-
-  if (btnTodos) {
-    btnTodos.addEventListener("click", selecionarTodosRetornos);
-  }
-
+  if (btnTodos) btnTodos.addEventListener("click", selecionarTodosRetornos);
   atualizarSelecaoRetorno();
 }
 
-/**
- * ==========================================================
- * Atualiza lista de selecionados
- * ==========================================================
- */
+function obterChecksRetornoVisiveis() {
+  const tbody = document.getElementById("retorno-body");
+  return tbody ? Array.from(tbody.querySelectorAll("input.checkRetorno")) : [];
+}
 
 function atualizarSelecaoRetorno() {
-  retornosSelecionados = Array.from(
-    document.querySelectorAll(".checkRetorno:checked"),
-  ).map((check) => ({
-    chamadoPai: check.dataset.chamadoPai,
-
-    chamadoFilho: check.dataset.chamadoFilho,
-  }));
+  const checks = obterChecksRetornoVisiveis();
+  retornosSelecionados = checks
+    .filter((check) => check.checked)
+    .map((check) => ({
+      linha: check.dataset.linha,
+      chamadoPai: check.dataset.chamadoPai,
+      chamadoFilho: check.dataset.chamadoFilho,
+    }));
 
   atualizarContadorRetornos();
-
   atualizarEstadoBotoes();
 }
 
-/**
- * ==========================================================
- * Seleciona / Desmarca todos os itens visíveis
- * ==========================================================
- */
-
 function selecionarTodosRetornos() {
-  const checks = document.querySelectorAll(".checkRetorno");
+  const checks = obterChecksRetornoVisiveis();
+  if (!checks.length) {
+    atualizarSelecaoRetorno();
+    return;
+  }
 
-  if (!checks.length) return;
-
-  const todosMarcados = Array.from(checks).every((check) => check.checked);
-
+  const todosMarcados = checks.every((check) => check.checked);
   checks.forEach((check) => {
     check.checked = !todosMarcados;
   });
@@ -84,59 +55,31 @@ function selecionarTodosRetornos() {
   atualizarSelecaoRetorno();
 }
 
-/**
- * ==========================================================
- * Atualiza contador
- * ==========================================================
- */
-
 function atualizarContadorRetornos() {
   const contador = document.getElementById("contadorRetornos");
-
   if (!contador) return;
 
-  const total = document.querySelectorAll(".checkRetorno").length;
-
-  const selecionados = document.querySelectorAll(
-    ".checkRetorno:checked",
-  ).length;
+  const checks = obterChecksRetornoVisiveis();
+  const total = checks.length;
+  const selecionados = checks.filter((check) => check.checked).length;
 
   if (total === 0) {
     contador.textContent = "Nenhum retorno";
-
-    return;
-  }
-
-  if (selecionados === 0) {
+  } else if (selecionados === 0) {
     contador.textContent = "Nenhum item selecionado";
-
-    return;
+  } else {
+    contador.textContent = `${selecionados} de ${total} selecionado${selecionados > 1 ? "s" : ""}`;
   }
-
-  contador.textContent = `${selecionados} de ${total} selecionado${selecionados > 1 ? "s" : ""}`;
 }
-
-/**
- * ==========================================================
- * Atualiza estado dos botões
- * ==========================================================
- */
 
 function atualizarEstadoBotoes() {
   const btnDuplicar = document.getElementById("btnDuplicarRetorno");
-
   if (btnDuplicar) {
-    btnDuplicar.style.display = retornosSelecionados.length
-      ? "inline-flex"
-      : "none";
+    btnDuplicar.style.display = retornosSelecionados.length ? "inline-flex" : "none";
   }
-}
 
-/**
- * ==========================================================
- * Retorna os itens selecionados
- * ==========================================================
- */
+  if (typeof atualizarBotoesRetorno === "function") atualizarBotoesRetorno();
+}
 
 function obterRetornosSelecionados() {
   return [...retornosSelecionados];
