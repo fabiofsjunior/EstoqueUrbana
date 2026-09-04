@@ -1,33 +1,19 @@
 function carregarTopPecas() {
   const dados = DashboardStore.get("topPecas");
-
-  if (!Array.isArray(dados)) {
-    console.warn("⚠️ Dados Top Peças não carregados");
-
-    return;
-  }
+  if (!Array.isArray(dados)) return;
 
   const tabela = document.getElementById("topPecas");
-
   if (!tabela) return;
 
-  tabela.innerHTML = "";
-
-  let html = "";
-
+  tabela.replaceChildren();
   dados.forEach((item) => {
-    html += `
-
-            <tr>
-
-                <td>${item[0]}</td>
-
-                <td>${item[1]}</td>
-
-            </tr>
-
-        `;
+    if (!Array.isArray(item)) return;
+    const tr = document.createElement("tr");
+    [item[0], item[1]].forEach((valor) => {
+      const td = document.createElement("td");
+      td.textContent = valor == null || valor === "" ? "-" : String(valor);
+      tr.appendChild(td);
+    });
+    tabela.appendChild(tr);
   });
-
-  tabela.innerHTML = html;
 }

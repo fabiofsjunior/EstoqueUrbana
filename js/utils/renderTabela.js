@@ -1,178 +1,66 @@
-function obterDataRegistro(valor){
+function obterDataRegistro(valor) {
+  if (!valor) return null;
 
-
-    if(!valor){
-        return null;
+  if (typeof valor === "string" && valor.includes("/")) {
+    const partes = valor.split(" ")[0].split("/");
+    if (partes.length === 3) {
+      const data = new Date(Number(partes[2]), Number(partes[1]) - 1, Number(partes[0]));
+      return Number.isNaN(data.getTime()) ? null : data;
     }
+  }
 
+  // Para ISO/UTC, preserva o mês civil informado pela origem.
+  const iso = String(valor).trim();
+  const match = iso.match(/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?)?/);
+  if (match) {
+    const data = new Date(
+      Number(match[1]),
+      Number(match[2]) - 1,
+      Number(match[3]),
+      Number(match[4] || 0),
+      Number(match[5] || 0),
+      Number(match[6] || 0),
+    );
+    return Number.isNaN(data.getTime()) ? null : data;
+  }
 
-    // Formato do CACHE:
-    // 05/08/2026 - 14:12
-
-    if(
-        typeof valor === "string" &&
-        valor.includes("/")
-    ){
-
-        const partes =
-            valor.split(" ")[0]
-                .split("/");
-
-
-        return new Date(
-            partes[2],
-            partes[1] - 1,
-            partes[0]
-        );
-
-    }
-
-
-    // Formato ISO antigo:
-    // 2026-08-05T17:12:00.000Z
-
-    const data =
-        new Date(valor);
-
-
-    if(isNaN(data)){
-        return null;
-    }
-
-
-    return data;
-
+  const data = new Date(valor);
+  return Number.isNaN(data.getTime()) ? null : data;
 }
 
+function renderTabelaMensal({ dados, tbodyId, mensagemVazia }) {
+  const tbody = document.getElementById(tbodyId);
+  if (!tbody) return;
 
-
-
-
-function renderTabelaMensal({
-    dados,
-    tbodyId,
-    mensagemVazia
-}) {
-
-
-    const tbody =
-        document.getElementById(
-            tbodyId
-        );
-
-
-    if(!tbody) return;
-
-
-
-    tbody.innerHTML = "";
-
-
-
-    const hoje =
-        new Date();
-
-
-
-    const registros =
-        dados
-
-        .filter(item => {
-
-
-            const data =
-                obterDataRegistro(
-                    item.data
-                );
-
-
-            if(!data){
-                return false;
-            }
-
-
-            return (
-
-                data.getMonth() === hoje.getMonth()
-                &&
-                data.getFullYear() === hoje.getFullYear()
-
-            );
-
-
+  tbody.replaceChildren();
+  const hoje = new Date();
+  const registros = Array.isArray(dados)
+    ? dados
+        .filter((item) => {
+          const data = obterDataRegistro(item.data);
+          return data && data.getMonth() === hoje.getMonth() && data.getFullYear() === hoje.getFullYear();
         })
+        .sort((a, b) => obterDataRegistro(b.data) - obterDataRegistro(a.data))
+    : [];
 
+  if (registros.length === 0) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 5;
+    td.style.textAlign = "center";
+    td.textContent = mensagemVazia || "Nenhum registro encontrado.";
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+    return;
+  }
 
-        .sort(
-            (a,b)=>{
-
-                return (
-                    obterDataRegistro(b.data)
-                    -
-                    obterDataRegistro(a.data)
-                );
-
-            }
-
-        );
-
-
-
-    if(registros.length === 0){
-
-
-        tbody.innerHTML = `
-
-            <tr>
-
-                <td colspan="5" style="text-align:center">
-
-                    ${mensagemVazia}
-
-                </td>
-
-            </tr>
-
-        `;
-
-
-        return;
-
-    }
-
-
-
-    let html = "";
-
-
-
-    registros.forEach(item=>{
-
-
-        html += `
-
-            <tr>
-
-                <td>${item.chamado ?? "-"}</td>
-
-                <td>${item.atm ?? "-"}</td>
-
-                <td>${item.peca ?? "-"}</td>
-
-                <td>${item.destino ?? "-"}</td>
-
-                <td>${item.data ?? "-"}</td>
-
-            </tr>
-
-        `;
-
-
+  registros.forEach((item) => {
+    const tr = document.createElement("tr");
+    [item.chamado, item.atm, item.peca, item.destino, item.data].forEach((valor) => {
+      const td = document.createElement("td");
+      td.textContent = valor == null || valor === "" ? "-" : String(valor);
+      tr.appendChild(td);
     });
-
-
-
-    tbody.innerHTML = html;
-
-
+    tbody.appendChild(tr);
+  });
 }
