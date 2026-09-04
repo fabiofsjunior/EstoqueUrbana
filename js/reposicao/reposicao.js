@@ -2,136 +2,77 @@
  * ============================================================
  * REPOSIÇÃO DE PEÇAS
  * ============================================================
- *
- * Responsável por:
- *
- * - Renderizar estoque completo
- * - Classificar situação do estoque
- * - Atualizar contador
- * - Controlar seleção
- *
- * Não gera quantidade solicitada.
- * Essa informação pertence apenas ao modal.
- *
- * ============================================================
  */
 
 function renderReposicao(dados) {
   const tbody = document.getElementById("reposicao-body");
-
-  if (!tbody) {
-    console.warn("⚠️ reposicao-body não encontrado");
-    return;
-  }
-
-  tbody.innerHTML = "";
+  if (!tbody) return;
+  tbody.replaceChildren();
 
   if (!Array.isArray(dados) || dados.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="5" style="text-align:center">
-          Nenhuma peça encontrada.
-        </td>
-      </tr>
-    `;
-
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 5;
+    td.style.textAlign = "center";
+    td.textContent = "Nenhuma peça encontrada.";
+    tr.appendChild(td);
+    tbody.appendChild(tr);
     atualizarContadorReposicao();
-
     return;
   }
-
-  let html = "";
 
   dados.forEach((item) => {
     const saldo = Number(item.saldo ?? 0);
+    const tr = document.createElement("tr");
+    const status = saldo === 0
+      ? { linha: "linha-zerado", classe: "status-zerado", texto: "🔴 ZERADO" }
+      : saldo <= 10
+        ? { linha: "linha-critico", classe: "status-critico", texto: "🟡 ESTOQUE BAIXO" }
+        : { linha: "linha-normal", classe: "status-normal", texto: "🟢 ESTOQUE NORMAL" };
 
-    let classeLinha = "";
-    let statusTexto = "";
-    let statusClasse = "";
+    tr.className = status.linha;
 
-    //-----------------------------------------
-    // CLASSIFICAÇÃO
-    //-----------------------------------------
+    const checkTd = document.createElement("td");
+    const check = document.createElement("input");
+    check.type = "checkbox";
+    check.className = "checkReposicao";
+    check.dataset.codigo = String(item.codigo ?? "");
+    check.dataset.descricao = String(item.descricao ?? "");
+    check.dataset.saldo = String(saldo);
+    checkTd.appendChild(check);
+    tr.appendChild(checkTd);
 
-    if (saldo === 0) {
-      classeLinha = "linha-zerado";
-      statusTexto = "🔴 ZERADO";
-      statusClasse = "status-zerado";
-    } else if (saldo <= 10) {
-      classeLinha = "linha-critico";
-      statusTexto = "🟡 ESTOQUE BAIXO";
-      statusClasse = "status-critico";
-    } else {
-      classeLinha = "linha-normal";
-      statusTexto = "🟢 ESTOQUE NORMAL";
-      statusClasse = "status-normal";
-    }
+    [item.codigo, item.descricao, saldo].forEach((valor) => {
+      const td = document.createElement("td");
+      td.textContent = valor == null || valor === "" ? "-" : String(valor);
+      tr.appendChild(td);
+    });
 
-    html += `
-
-      <tr class="${classeLinha}">
-
-        <td>
-
-          <input
-            type="checkbox"
-            class="checkReposicao"
-            data-codigo="${item.codigo ?? ""}"
-            data-descricao="${item.descricao ?? ""}"
-            data-saldo="${saldo}"
-          >
-
-        </td>
-
-        <td>${item.codigo ?? "-"}</td>
-
-        <td>${item.descricao ?? "-"}</td>
-
-        <td>${saldo}</td>
-
-        <td>
-
-          <span class="status-reposicao ${statusClasse}">
-            ${statusTexto}
-          </span>
-
-        </td>
-
-      </tr>
-
-    `;
+    const statusTd = document.createElement("td");
+    const span = document.createElement("span");
+    span.className = `status-reposicao ${status.classe}`;
+    span.textContent = status.texto;
+    statusTd.appendChild(span);
+    tr.appendChild(statusTd);
+    tbody.appendChild(tr);
   });
-
-  tbody.innerHTML = html;
 
   atualizarContadorReposicao();
 }
 
 function atualizarTabelaReposicao() {
-  const dados = DashboardStore.get("reposicao");
-
-  renderReposicao(dados);
+  renderReposicao(DashboardStore.get("reposicao"));
 }
 
 function atualizarContadorReposicao() {
   const contador = document.getElementById("contadorReposicao");
-
   if (!contador) return;
-
-  const selecionados = document.querySelectorAll(
-    ".checkReposicao:checked",
-  ).length;
-
-  contador.textContent =
-    selecionados === 0
-      ? "Nenhum item selecionado"
-      : `${selecionados} item(ns) selecionado(s)`;
+  const selecionados = document.querySelectorAll(".checkReposicao:checked").length;
+  contador.textContent = selecionados === 0
+    ? "Nenhum item selecionado"
+    : `${selecionados} item(ns) selecionado(s)`;
 }
 
-document.addEventListener("change", function (e) {
-  if (!e.target.classList.contains("checkReposicao")) {
-    return;
-  }
-
-  atualizarContadorReposicao();
+document.addEventListener("change", (e) => {
+  if (e.target?.classList?.contains("checkReposicao")) atualizarContadorReposicao();
 });
